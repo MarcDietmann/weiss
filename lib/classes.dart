@@ -1,3 +1,5 @@
+import 'package:http/http.dart';
+
 class CyclicData {
   System? system;
   Cam? cam0;
@@ -5,37 +7,38 @@ class CyclicData {
   Corner? corner0;
   Corner? corner1;
 
-  CyclicData({this.system, this.cam0, this.cam1, this.corner0, this.corner1});
+  CyclicData({system, cam0, cam1, corner0, corner1});
 
   CyclicData.fromJson(Map<String, dynamic> json) {
-    system =
-    json['System'] != null ? new System.fromJson(json['System']) : null;
-    cam0 = json['Cam0'] != null ? new Cam.fromJson(json['Cam0']) : null;
-    cam1 = json['Cam1'] != null ? new Cam.fromJson(json['Cam1']) : null;
-    corner0 =
-    json['Corner0'] != null ? new Corner.fromJson(json['Corner0']) : null;
-    corner1 =
-    json['Corner1'] != null ? new Corner.fromJson(json['Corner1']) : null;
+    system = json['System'] != null ? System.fromJson(json['System']) : null;
+    cam0 = json['Cam0'] != null ? Cam.fromJson(json['Cam0']) : null;
+    cam1 = json['Cam1'] != null ? Cam.fromJson(json['Cam1']) : null;
+    corner0 = json['Corner0'] != null ? Corner.fromJson(json['Corner0']) : null;
+    corner1 = json['Corner1'] != null ? Corner.fromJson(json['Corner1']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.system != null) {
-      data['System'] = this.system!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (system != null) {
+      data['System'] = system!.toJson();
     }
-    if (this.cam0 != null) {
-      data['Cam0'] = this.cam0!.toJson();
+    if (cam0 != null) {
+      data['Cam0'] = cam0!.toJson();
     }
-    if (this.cam1 != null) {
-      data['Cam1'] = this.cam1!.toJson();
+    if (cam1 != null) {
+      data['Cam1'] = cam1!.toJson();
     }
-    if (this.corner0 != null) {
-      data['Corner0'] = this.corner0!.toJson();
+    if (corner0 != null) {
+      data['Corner0'] = corner0!.toJson();
     }
-    if (this.corner1 != null) {
-      data['Corner1'] = this.corner1!.toJson();
+    if (corner1 != null) {
+      data['Corner1'] = corner1!.toJson();
     }
     return data;
+  }
+
+  String toString() {
+    return "System: ${system.toString()}\nCam0: ${cam0.toString()}\nCam1: ${cam1.toString()}\nCorner0: ${corner0.toString()}\nCorner1: ${corner1.toString()}";
   }
 }
 
@@ -43,7 +46,7 @@ class System {
   String? onlineTime;
   String? enabledTime;
 
-  System({this.onlineTime, this.enabledTime});
+  System({onlineTime, enabledTime});
 
   System.fromJson(Map<String, dynamic> json) {
     onlineTime = json['OnlineTime'];
@@ -51,20 +54,25 @@ class System {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['OnlineTime'] = this.onlineTime;
-    data['EnabledTime'] = this.enabledTime;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['OnlineTime'] = onlineTime;
+    data['EnabledTime'] = enabledTime;
     return data;
   }
 
-
+  String toString() {
+    return "{OnlineTime: $onlineTime; EnabledTime:$enabledTime}";
+  }
 }
 
 class Cam {
   String? axis0Position;
   String? axis0Velocity;
+  String toString() {
+    return "{axis0Position: $axis0Position; axis0Velocity:$axis0Velocity}";
+  }
 
-  Cam({this.axis0Position, this.axis0Velocity});
+  Cam({axis0Position, axis0Velocity});
 
   Cam.fromJson(Map<String, dynamic> json) {
     axis0Position = json['Axis0Position'];
@@ -72,9 +80,9 @@ class Cam {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Axis0Position'] = this.axis0Position;
-    data['Axis0Velocity'] = this.axis0Velocity;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Axis0Position'] = axis0Position;
+    data['Axis0Velocity'] = axis0Velocity;
     return data;
   }
 }
@@ -86,14 +94,17 @@ class Corner {
   String? axis1Velocity;
   String? axis2Position;
   String? axis2Velocity;
+  String toString() {
+    return "{axis0Position: $axis0Position; axis0Velocity:$axis0Velocity; axis1Position: $axis1Position; axis1Velocity:$axis1Velocity; axis2Position: $axis2Position; axis0Velocity:$axis0Velocity}";
+  }
 
   Corner(
-      {this.axis0Position,
-        this.axis0Velocity,
-        this.axis1Position,
-        this.axis1Velocity,
-        this.axis2Position,
-        this.axis2Velocity});
+      {axis0Position,
+      axis0Velocity,
+      axis1Position,
+      axis1Velocity,
+      axis2Position,
+      axis2Velocity});
 
   Corner.fromJson(Map<String, dynamic> json) {
     axis0Position = json['Axis0Position'];
@@ -105,13 +116,13 @@ class Corner {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Axis0Position'] = this.axis0Position;
-    data['Axis0Velocity'] = this.axis0Velocity;
-    data['Axis1Position'] = this.axis1Position;
-    data['Axis1Velocity'] = this.axis1Velocity;
-    data['Axis2Position'] = this.axis2Position;
-    data['Axis2Velocity'] = this.axis2Velocity;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Axis0Position'] = axis0Position;
+    data['Axis0Velocity'] = axis0Velocity;
+    data['Axis1Position'] = axis1Position;
+    data['Axis1Velocity'] = axis1Velocity;
+    data['Axis2Position'] = axis2Position;
+    data['Axis2Velocity'] = axis2Velocity;
     return data;
   }
 }

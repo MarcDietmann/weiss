@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
-class was2Provider extends ChangeNotifier{
+class Was2Provider extends ChangeNotifier{
 
 }
