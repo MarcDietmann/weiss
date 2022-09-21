@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -11,14 +12,22 @@ import 'package:weiss_app/url_input.dart';
 
 import 'ls_hybrid.dart';
 
-void main() => runApp(MultiProvider(providers: [
-      ChangeNotifierProvider<HybridProvider>(
-        create: (_) => HybridProvider(),
+void main() => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<HybridProvider>(
+            create: (_) => HybridProvider(),
+          ),
+        ],
+        child: const MaterialApp(
+          home: MyHome(),
+        ),
       ),
-    ], child: const MaterialApp(home: MyHome())));
+    );
 
 class MyHome extends StatelessWidget {
   const MyHome({Key? key}) : super(key: key);
+  static const platform = MethodChannel('samples.flutter.dev/battery');
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +140,9 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   Widget build(BuildContext context) {
+    if (result != null) {
+      Provider.of<HybridProvider>(context, listen: false).getData(result!.code);
+    }
     return Scaffold(
       body: Column(
         children: <Widget>[
