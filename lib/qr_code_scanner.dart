@@ -8,10 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:weiss_app/classes.dart';
 import 'package:weiss_app/url_input.dart';
 
 import 'ls_hybrid.dart';
-
+import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 void main() => runApp(
       MultiProvider(
         providers: [
@@ -25,17 +26,24 @@ void main() => runApp(
       ),
     );
 
-class MyHome extends StatelessWidget {
+class MyHome extends StatefulWidget {
   const MyHome({Key? key}) : super(key: key);
-  static const platform = MethodChannel('samples.flutter.dev/battery');
+
+  @override
+  State<MyHome> createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: const Text('Connect to maschine')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
@@ -114,6 +122,8 @@ class MyHome extends StatelessWidget {
     );
   }
 }
+
+
 
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);
