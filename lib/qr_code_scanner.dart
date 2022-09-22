@@ -8,31 +8,33 @@ import 'package:open_settings/open_settings.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:weiss_app/constants.dart';
+import 'package:weiss_app/device_page.dart';
 import 'package:weiss_app/url_input.dart';
 
 import 'hybrid_provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 
 void main() => runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<HybridProvider>(
-            create: (_) => HybridProvider(),
-          ),
-        ],
-        child: MaterialApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<HybridProvider>(
+          create: (_) => HybridProvider(),
+        ),
+      ],
+      child: MaterialApp(
 
-          theme: ThemeData(
-            appBarTheme: AppBarTheme(
+        theme: ThemeData(
+          appBarTheme: AppBarTheme(
               iconTheme: IconThemeData(color: Colors.black),
               color: Colors.black,
               titleTextStyle: TextStyle(fontSize: 24, color: kYellow)
-            ),
           ),
-          home: MyHome(),
         ),
+        home: MyHome(),
       ),
+    ),
     );
+
 
 class MyHome extends StatefulWidget {
   const MyHome({Key? key}) : super(key: key);
@@ -96,7 +98,7 @@ class _MyHomeState extends State<MyHome> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const UrlInputPage(),
+                      builder: (context) => const DevicePage(),
                     ),
                   );
                 },
@@ -106,11 +108,11 @@ class _MyHomeState extends State<MyHome> {
                       SizedBox(
                         width: 50,
                       ),
-                      Icon(CupertinoIcons.wifi),
+                      Icon(CupertinoIcons.device_desktop),
                       SizedBox(
                         width: 50,
                       ),
-                      Text('Enter URL'),
+                      Text('Select Device'),
                       SizedBox(
                         width: 50,
                       ),
