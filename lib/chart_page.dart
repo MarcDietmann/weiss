@@ -12,20 +12,20 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(0xffff6101),
       ),
-      home: HomePage(child: Container(color: Colors.red,))
+      home: ChartPage(/*child: Container(color: Colors.red,)*/)
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  final Widget child;
+class ChartPage extends StatefulWidget {
+  // final Widget child;
 
-  HomePage({Key? key,  required this.child}) : super(key: key);
+  ChartPage({Key? key, /* required this.child*/}) : super(key: key);
 
-  _HomePageState createState() => _HomePageState();
+  _ChartPageState createState() => _ChartPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ChartPageState extends State<ChartPage> {
   late List<charts.Series<Pollution, String>> _seriesData;
   late List<charts.Series<Task, String>> _seriesPieData;
   late List<charts.Series<Sales, int>> _seriesLineData;
@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        length: 3,
+        length: 1,
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Color(0xff1976d2),
@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              Padding(
+              /*Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Container(
                   child: Center(
@@ -274,7 +274,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              ),
+              ),*/
             ],
           ),
         ),
@@ -282,6 +282,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
 
 class Pollution {
   String place;

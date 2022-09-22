@@ -45,6 +45,7 @@ dependencies:
   dio: ^4.0.6
   chopper: ^5.0.0
   syncfusion_flutter_charts: ^20.2.50
+  flutter_plot: ^0.1.0
   #flutter_isolate: ^1.0.0+15
   #starflut: ^1.0.0
 

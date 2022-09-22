@@ -4,15 +4,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:weiss_app/classes.dart';
 import 'package:weiss_app/url_input.dart';
 
-import 'ls_hybrid.dart';
+import 'hybrid_provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
+
 void main() => runApp(
       MultiProvider(
         providers: [
@@ -34,16 +33,20 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<HybridProvider>(context, listen: false).init();
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: const Text('Connect to maschine')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
@@ -73,9 +76,11 @@ class _MyHomeState extends State<MyHome> {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const UrlInputPage(),
-                ));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const UrlInputPage(),
+                  ),
+                );
               },
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -122,8 +127,6 @@ class _MyHomeState extends State<MyHome> {
     );
   }
 }
-
-
 
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);
