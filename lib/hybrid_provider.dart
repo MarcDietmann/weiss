@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:charts_flutter/flutter.dart' as charts;
+// import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
+// import 'package:get/utils.dart';
 import 'package:http/http.dart';
 import 'package:weiss_app/url_input.dart';
 import 'chart_page.dart';
@@ -36,7 +36,7 @@ class HybridProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print("Error during getHybridData:");
-      e.printError();
+      // e.printError();
     }
   }
 

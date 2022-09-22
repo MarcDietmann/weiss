@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
+// import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/plot.dart';
-import 'chart_page.dart';
+// import 'chart_page.dart';
 import 'hybrid_provider.dart';
-import 'package:syncfusion_flutter_charts/charts.dart' as charts;
+// import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 
 class UrlInputPage extends StatefulWidget {
   const UrlInputPage({Key? key}) : super(key: key);
@@ -175,7 +175,7 @@ class MainButton extends StatelessWidget {
 
   final TextEditingController? controller;
   final String label;
-  final Callback onPressed;
+  final VoidCallback onPressed;
   final Icon icon;
 
   @override

@@ -65,9 +65,9 @@ class mqtt_class {
     await Future.delayed(const Duration(milliseconds: 1000));
     return testMap;
   }
-}
+}*/
 
-*/
+
 import 'package:flutter/material.dart';
 import 'package:weiss_app/url_input.dart';
 
