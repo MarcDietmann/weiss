@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:weiss_app/constants.dart';
 import 'package:weiss_app/url_input.dart';
 
 import 'hybrid_provider.dart';
@@ -19,7 +20,15 @@ void main() => runApp(
             create: (_) => HybridProvider(),
           ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
+
+          theme: ThemeData(
+            appBarTheme: AppBarTheme(
+              iconTheme: IconThemeData(color: Colors.black),
+              color: Colors.black,
+              titleTextStyle: TextStyle(fontSize: 24, color: kYellow)
+            ),
+          ),
           home: MyHome(),
         ),
       ),
@@ -43,13 +52,17 @@ class _MyHomeState extends State<MyHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Connect to maschine')),
+      appBar: AppBar(title: const Text('WhyEquals MCS 0.2')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: Color.fromRGBO(40, 46, 49, 90),
+                  textStyle: TextStyle(
+                      fontWeight: FontWeight.bold)),
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const QRViewExample(),
@@ -65,61 +78,73 @@ class _MyHomeState extends State<MyHome> {
                     SizedBox(
                       width: 50,
                     ),
-                    Text('QR-Code scanen'),
+                    Text('Scan QR-Code'),
                     SizedBox(
                       width: 50,
                     ),
                   ]),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const UrlInputPage(),
-                  ),
-                );
-              },
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
-                    SizedBox(
-                      width: 50,
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(40, 46, 49, 90),
+                    textStyle: TextStyle(
+                        fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const UrlInputPage(),
                     ),
-                    Icon(CupertinoIcons.wifi),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    Text('URL eingen'),
-                    SizedBox(
-                      width: 50,
-                    ),
-                  ]),
+                  );
+                },
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                      SizedBox(
+                        width: 50,
+                      ),
+                      Icon(CupertinoIcons.wifi),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      Text('Enter URL'),
+                      SizedBox(
+                        width: 50,
+                      ),
+                    ]),
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                OpenSettings.openWIFISetting();
-              },
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
-                    SizedBox(
-                      width: 50,
-                    ),
-                    Icon(CupertinoIcons.wifi),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    Text('Open wifi settings'),
-                    SizedBox(
-                      width: 50,
-                    ),
-                  ]),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(40, 46, 49, 90),
+                    textStyle: TextStyle(
+                        fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  OpenSettings.openWIFISetting();
+                },
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                      SizedBox(
+                        width: 50,
+                      ),
+                      Icon(CupertinoIcons.wifi),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      Text('Open Wi-Fi settings'),
+                      SizedBox(
+                        width: 50,
+                      ),
+                    ]),
+              ),
             ),
           ),
         ],
@@ -204,7 +229,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                                   return Text(
                                       'Camera facing ${describeEnum(snapshot.data!)}');
                                 } else {
-                                  return const Text('loading');
+                                  return const Text('Loading...');
                                 }
                               },
                             )),
@@ -282,7 +307,7 @@ class _QRViewExampleState extends State<QRViewExample> {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('no Permission')),
+        const SnackBar(content: Text('Permission Denied!')),
       );
     }
   }

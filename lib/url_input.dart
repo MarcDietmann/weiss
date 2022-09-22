@@ -29,21 +29,12 @@ class _UrlInputPageState extends State<UrlInputPage> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text('Connect to maschine')),
-        body: Center(
-          child: Column(
+        body: Stack(children: [
+          Column(
             children: [
-              /*Container(
-                height: 400,
-                child: charts.SfCartesianChart(
-                  series: charts.LineSeries<LiveData, int>(
-                    dataSource: Provider.of<HybridProvider>(context,listen: true).chartData,
-                    color: Colors.red,
-                    xValueMapper: (LiveData l, _)=>l.index,
-                    yValueMapper: (LiveData l, _)=> num.parse(l.value!.corner1!.axis0Position!),
-                  ),
-                ),
-              ),*/
+              SizedBox(
+                height: 50,
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
@@ -52,49 +43,120 @@ class _UrlInputPageState extends State<UrlInputPage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(Provider.of<HybridProvider>(context, listen: true)
-                    .data
-                    .toString()),
+                child: Text(
+                    Provider.of<HybridProvider>(context, listen: true).data ==
+                            null
+                        ? "Looking for device..."
+                        : "Device found!"),
               ),
-              MainButton(
-                controller: controller,
-                icon: Icon(CupertinoIcons.graph_circle_fill),
-                label: 'show Graph',
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => PlotPage(),
-                  ),
-                ),
-              ),
+              Provider.of<HybridProvider>(context, listen: true).data != null
+                  ? MainButton(
+                      controller: controller,
+                      icon: Icon(CupertinoIcons.graph_circle_fill),
+                      label: 'Display graph',
+                      onPressed: () => {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PlotPage(),
+                              ),
+                            ),
+                          })
+                  : MainButton(
+                      controller: controller,
+                      icon: Icon(CupertinoIcons.graph_circle_fill),
+                      label: 'Display graph',
+                      onPressed: () => {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Scaffold(
+                              body: MyStack(
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        "You are not able to fetch the data. Please go back and try again!"),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      },
+                    ),
               MainButton(
                   controller: controller,
                   icon: Icon(CupertinoIcons.search_circle_fill),
-                  label: 'search device',
+                  label: 'Find devices',
                   onPressed: () =>
                       Provider.of<HybridProvider>(context, listen: false)
                           .getData(controller.text)),
               MainButton(
                   controller: controller,
                   icon: Icon(CupertinoIcons.dot_radiowaves_left_right),
-                  label: 'create Live Data',
+                  label: 'Retrieve live data',
                   onPressed: () =>
                       Provider.of<HybridProvider>(context, listen: false)
                           .addLiveData(controller.text)),
               MainButton(
                   controller: controller,
-                  icon: Icon(CupertinoIcons.play_circle_fill),
-                  label: 'start listening',
-                  onPressed: () =>
-                      Provider.of<HybridProvider>(context, listen: false)
-                          .startListening()),
-              MainButton(
-                  controller: controller,
                   icon: Icon(CupertinoIcons.stop_circle_fill),
-                  label: 'stop listening',
+                  label: 'Stop listening',
                   onPressed: () =>
                       Provider.of<HybridProvider>(context, listen: false)
                           .stopListening()),
             ],
+          ),
+          FuckGoBack(),
+        ]),
+      ),
+    );
+  }
+}
+
+class MyStack extends StatelessWidget {
+  const MyStack({Key? key, required this.child}) : super(key: key);
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Stack(
+        children: [
+          child,
+          FuckGoBack(),
+        ],
+      ),
+    );
+  }
+}
+
+class FuckGoBack extends StatelessWidget {
+  const FuckGoBack({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Opacity(
+            opacity: 0.4,
+            child: Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(40.0),
+                      bottomRight: Radius.circular(40.0),
+                      topLeft: Radius.circular(40.0),
+                      bottomLeft: Radius.circular(40.0)),
+                ),
+                child: Icon(CupertinoIcons.xmark)),
           ),
         ),
       ),
@@ -121,6 +183,10 @@ class MainButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            primary: Color.fromRGBO(40, 46, 49, 90),
+            textStyle: TextStyle(
+                fontWeight: FontWeight.bold)),
         onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -142,4 +208,3 @@ class MainButton extends StatelessWidget {
     );
   }
 }
-
