@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 // import 'package:get/utils.dart';
 import 'package:http/http.dart';
-import 'package:weiss_app/url_input.dart';
+
 import 'chart_page.dart';
 import 'classes.dart';
 

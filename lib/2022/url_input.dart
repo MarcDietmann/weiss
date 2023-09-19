@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:provider/provider.dart';
-import 'package:weiss_app/plot.dart';
+import 'package:weiss_app/2022/plot.dart';
+
 // import 'chart_page.dart';
 import 'hybrid_provider.dart';
 // import 'package:syncfusion_flutter_charts/charts.dart' as charts;

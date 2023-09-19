@@ -7,12 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:weiss_app/constants.dart';
-import 'package:weiss_app/device_page.dart';
-import 'package:weiss_app/url_input.dart';
-
-import 'hybrid_provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
+
+import 'constants.dart';
+import 'device_page.dart';
+import 'hybrid_provider.dart';
 
 void main() => runApp(
     MultiProvider(

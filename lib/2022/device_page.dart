@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:weiss_app/MQTT.dart';
-import 'package:weiss_app/url_input.dart';
+import 'package:weiss_app/2022/MQTT.dart';
+import 'package:weiss_app/2022/url_input.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({Key? key}) : super(key: key);

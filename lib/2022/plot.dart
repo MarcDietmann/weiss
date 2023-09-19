@@ -2,10 +2,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as c;
-import 'package:weiss_app/classes.dart';
-import 'package:weiss_app/constants.dart';
-import 'package:weiss_app/hybrid_provider.dart';
-import 'package:weiss_app/url_input.dart';
+import 'package:weiss_app/2022/url_input.dart';
+
+import 'classes.dart';
+import 'constants.dart';
+import 'hybrid_provider.dart';
+
 
 class PlotPage extends StatefulWidget {
   @override
