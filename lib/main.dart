@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
+import 'package:weiss_app/utils/llm_wrapper.dart';
 import 'package:weiss_app/utils/mqtt_provider.dart';
 
 import 'machine_detail_screen.dart';
@@ -10,23 +11,27 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+      ChangeNotifierProvider(create: (_) => MQTTProvider()),
+      ChangeNotifierProvider(create: (_) => LLMWrapper()),
+      ChangeNotifierProxyProvider<MQTTProvider,DiagnosticsProvider>(
+          create: (_) => DiagnosticsProvider(),
+          update: (_, mqttProvider, diagnosticsProvider) {
+            if(diagnosticsProvider==null)return DiagnosticsProvider();
+            diagnosticsProvider.mqttProvider = mqttProvider;
+            return diagnosticsProvider;
+          })
+    ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.grey,
+          useMaterial3: true,
+        ),
+        home: LoadingScreen(),
       ),
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider(create: (_) => MQTTProvider()),
-        ChangeNotifierProxyProvider<MQTTProvider,DiagnosticsProvider>(
-            create: (_) => DiagnosticsProvider(),
-            update: (_, mqttProvider, diagnosticsProvider) {
-              if(diagnosticsProvider==null)return DiagnosticsProvider();
-              diagnosticsProvider.mqttProvider = mqttProvider;
-              return diagnosticsProvider;
-            })
-      ], child: LoadingScreen()),
     );
   }
 }

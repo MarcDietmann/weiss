@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:weiss_app/utils/diagnostics_provider.dart';
 import 'package:weiss_app/widgets/diagnostics_list.dart';
+import 'package:weiss_app/widgets/helper_chat.dart';
 import 'package:weiss_app/widgets/rounded_container.dart';
 
 import '2022/constants.dart';
@@ -13,6 +17,7 @@ class MachineDetailScreen extends StatelessWidget {
       body: ListView(
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.all(48.0).copyWith(bottom: 16),
@@ -35,22 +40,19 @@ class MachineDetailScreen extends StatelessWidget {
                                     Container(
                                       height: 300,
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text("TC Rundschalttisch",
                                               style: kHeadingStyle),
                                           Text(
                                               "ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
                                               style: kTextStyle),
-                                          Text(
-                                              "",
+                                          Text("", style: kTextStyle),
+                                          Text("621242 - Walldürn",
                                               style: kTextStyle),
-
-                                          Text(
-                                              "621242 - Walldürn",
-                                              style: kTextStyle),
-                                          Text("Nächste Reperatur: 20.12.2024", style: kSubHeadingStyle),
-
+                                          Text("Nächste Reperatur: 20.12.2024",
+                                              style: kSubHeadingStyle),
                                         ],
                                       ),
                                     ),
@@ -76,7 +78,8 @@ class MachineDetailScreen extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(48.0).copyWith(top: 0),
+                padding:
+                    const EdgeInsets.all(48.0).copyWith(top: 0, bottom: 16),
                 child: RoundedContainer(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -115,10 +118,77 @@ class MachineDetailScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(48.0).copyWith(top: 0),
+                child: RoundedContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Text("Data", style: kSubHeadingStyle),
+                        SfCartesianChart(
+                          primaryXAxis:
+                              DateTimeAxis(title: AxisTitle(text: 'Time')),
+                          primaryYAxis: NumericAxis(
+                              title: AxisTitle(text: 'Temperature')),
+                          series: [
+                            LineSeries<Map, DateTime>(
+                              dataSource:
+                                  Provider.of<DiagnosticsProvider>(context)
+                                      .getData(
+                                          DiagnosticsProvider.temperatureTopic),
+                              xValueMapper: (Map data, _) =>
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      data["julian_timestamp"]),
+                              yValueMapper: (Map data, _) =>
+                                  data["temperature"],
+                              name: 'Temperature',
+                              markerSettings: MarkerSettings(isVisible: true),
+                            )
+                          ],
+                        ),
+                        SfCartesianChart(
+                          primaryXAxis:
+                              DateTimeAxis(title: AxisTitle(text: 'Time')),
+                          primaryYAxis:
+                              NumericAxis(title: AxisTitle(text: 'vibration')),
+                          series: [
+                            LineSeries<Map, DateTime>(
+                              dataSource: Provider.of<DiagnosticsProvider>(
+                                      context)
+                                  .getData(DiagnosticsProvider.vibrationTopic),
+                              xValueMapper: (Map data, _) =>
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      data["julian_timestamp"]),
+                              yValueMapper: (Map data, _) => data["adxlX"]
+                                  ["Key Values"]["peak_high_frequency"],
+                              name: 'Vibration',
+                              markerSettings: MarkerSettings(isVisible: true),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                        title: 'Chat with AI',
+                      )));
+        },
+        label: Text("Hilfe Chat"),
+        icon: Icon(Icons.chat),
+        backgroundColor: kYellow,
       ),
     );
   }
