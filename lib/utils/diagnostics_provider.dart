@@ -17,7 +17,7 @@ void init(){
   }
 }
 
-void safeData(String topic, MqttMessage msg){
+void safeData(String topic, MqttReceivedMessage<MqttMessage?> msg){
 
 }
 }
