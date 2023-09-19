@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weiss_app/overview_screen.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
 import 'package:weiss_app/utils/llm_wrapper.dart';
 import 'package:weiss_app/utils/mqtt_provider.dart';
@@ -59,7 +60,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     return loading == false
-        ? MachineDetailScreen()
+        ? OverviewScreen()
         : Scaffold(
             body: Container(
               child: Text("Loading"),

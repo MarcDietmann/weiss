@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -14,6 +16,8 @@ class MachineDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+      ),
       body: ListView(
         children: [
           Column(
@@ -31,42 +35,7 @@ class MachineDetailScreen extends StatelessWidget {
                         Flexible(
                           child: Padding(
                             padding: const EdgeInsets.only(right: 16.0),
-                            child: RoundedContainer(
-                              height: double.infinity,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: 300,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text("TC Rundschalttisch",
-                                              style: kHeadingStyle),
-                                          Text(
-                                              "ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
-                                              style: kTextStyle),
-                                          Text("", style: kTextStyle),
-                                          Text("621242 - Walldürn",
-                                              style: kTextStyle),
-                                          Text("Nächste Reperatur: 20.12.2024",
-                                              style: kSubHeadingStyle),
-                                        ],
-                                      ),
-                                    ),
-                                    // Spacer(
-                                    //   flex: 2,
-                                    // ),
-                                    Image.asset(
-                                      "assets/images/tc320t.png",
-                                      height: 200,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            child: TCMachineCard(),
                           ),
                         ),
                         StatusDisplay(
@@ -186,7 +155,7 @@ class MachineDetailScreen extends StatelessWidget {
                         title: 'Chat with AI',
                       )));
         },
-        label: Text("Hilfe Chat"),
+        label: Text("Hilfe Chat",style: kSubHeadingStyle,),
         icon: Icon(Icons.chat),
         backgroundColor: kYellow,
       ),
@@ -194,9 +163,68 @@ class MachineDetailScreen extends StatelessWidget {
   }
 }
 
+class TCMachineCard extends StatelessWidget {
+  final bool onDetailScreen;
+  const TCMachineCard({
+    super.key, this.onDetailScreen = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    double height = onDetailScreen?double.infinity:200;
+    return Container(
+      height: height,
+      child: GestureDetector(
+        onTap: () {
+          if(onDetailScreen)return;
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => MachineDetailScreen()));
+        },
+        child: Hero(
+          tag: "machine",
+          child: Material(
+            child: RoundedContainer(
+              height: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("TC Rundschalttisch", style: kHeadingStyle),
+                        Text("ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
+                            style: kTextStyle),
+                        Text("", style: kTextStyle),
+                        Text("621242 - Walldürn", style: kTextStyle),
+                        Text("Nächste Reperatur: 20.12.2024",
+                            style: kSubHeadingStyle),
+                      ],
+                    ),
+                    // Spacer(
+                    //   flex: 2,
+                    // ),
+                    Image.asset(
+                      "assets/images/tc320t.png",
+                      height: min(200,height*0.7),
+                    ),
+                    onDetailScreen?SizedBox():StatusDisplay(small: !onDetailScreen,),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class StatusDisplay extends StatelessWidget {
   final MachineStatus? status;
-  const StatusDisplay({super.key, this.status});
+  final bool small;
+  const StatusDisplay({super.key, this.status,  this.small = false});
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +234,7 @@ class StatusDisplay extends StatelessWidget {
     } else if (status == MachineStatus.warning) {
       color = Colors.yellow;
     }
+    double height = small?100:250;
 
     return RoundedContainer(
       color: color.withOpacity(0.3),
@@ -221,13 +250,13 @@ class StatusDisplay extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 SizedBox(
-                  height: 250,
+                  height: height,
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: CircularProgressIndicator(
-                        strokeWidth: 10,
+                        strokeWidth: small?5:10,
                         value: 1,
                         color: color,
                       ),
@@ -241,13 +270,13 @@ class StatusDisplay extends StatelessWidget {
                           ? Icons.warning
                           : Icons.gpp_good,
                   color: color,
-                  size: 100,
+                  size: small?50:100
                 )
               ],
             ),
             Text(
               "${status == MachineStatus.bad ? "Schlecht" : status == MachineStatus.warning ? "Warnung" : "Gut"}",
-              style: kHeadingStyle,
+              style: small?kSubHeadingStyle:kHeadingStyle,
             )
           ],
         ),

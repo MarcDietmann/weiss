@@ -10,7 +10,7 @@ class LLMWrapper extends ChangeNotifier {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization':
-        'Bearer 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'
+        'Bearer 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'
   };
 
   List<Map<String, dynamic>> messages = [
@@ -48,7 +48,7 @@ class LLMWrapper extends ChangeNotifier {
           },
 
         },
-        "required": ["scope"]
+        "required": ["person"]
       }
     }
   ];
