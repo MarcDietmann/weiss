@@ -10,7 +10,7 @@ class LLMWrapper extends ChangeNotifier {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization':
-        'Bearer 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'
+        'Bearer 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'
   };
 
   List<Map<String, dynamic>> messages = [
@@ -29,6 +29,20 @@ class LLMWrapper extends ChangeNotifier {
         "type": "object",
         "properties": {
           "scope": {
+            "type": "string",
+            "description": "request either all or none of the available data"
+          },
+
+        },
+        "required": ["scope"]
+      }
+    },{
+      "name": "call_service",
+      "description": "If the system is in a critical state and the first solution does not fix it, call the service",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "person": {
             "type": "string",
             "description": "request either all or none of the available data"
           },
