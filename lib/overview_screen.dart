@@ -12,6 +12,14 @@ class OverviewScreen extends StatefulWidget {
 }
 
 class _OverviewScreenState extends State<OverviewScreen> {
+  var selectedDropdownValue = "Alle";
+  List<String> dropdownValues = [
+    "Alle",
+    "Sortiert nach Unternehmen",
+    "Sortiert nach Standort",
+    "Sortiert nach Maschinenart"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +35,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   child: Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(50.0),
+                        padding: const EdgeInsets.all(20.0),
                         child: Image.asset(
                           "assets/images/logo.png",
                           height: 100,
@@ -40,6 +48,28 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         "Maschinenübersicht",
                         style: kHeadingStyle.copyWith(fontSize: 80),
                       ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Spacer(),
+                      DropdownButton<String>(
+                          value: selectedDropdownValue,
+                          items: dropdownValues
+                              .map((e) => DropdownMenuItem<String>(
+                                    child: Text("$e"),
+                                    value: e,
+                                  ))
+                              .toList(),
+                          onChanged: (e) {
+                            setState(() {
+                              selectedDropdownValue = e.toString();
+                            });
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          }),
                     ],
                   ),
                 ),
@@ -111,7 +141,7 @@ class MyWidget extends StatefulWidget {
 class _MyWidgetState extends State<MyWidget> {
   final TextEditingController _ipAddressController = TextEditingController();
   String _machineType = 'TC Rundschalttisch';
-  String _customer ="Dr. Oetker";
+  String _customer = "Dr. Oetker";
 
   void _addMachine() {
     final String ipAddress = _ipAddressController.text;
@@ -139,7 +169,6 @@ class _MyWidgetState extends State<MyWidget> {
             decoration: InputDecoration(labelText: 'IP-Adresse'),
           ),
         ),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -149,7 +178,8 @@ class _MyWidgetState extends State<MyWidget> {
             ),
             DropdownButton<String>(
               value: _customer,
-              items: ['Dr. Oetker', 'Wagner', 'Kunde 3', 'Kunde 4'].map((String value) {
+              items: ['Dr. Oetker', 'Wagner', 'Kunde 3', 'Kunde 4']
+                  .map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -165,7 +195,6 @@ class _MyWidgetState extends State<MyWidget> {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -173,7 +202,12 @@ class _MyWidgetState extends State<MyWidget> {
             ),
             DropdownButton<String>(
               value: _machineType,
-              items: ['TC Rundschalttisch', 'Maschine 2', 'Maschine 3', 'Maschine 4'].map((String value) {
+              items: [
+                'TC Rundschalttisch',
+                'Maschine 2',
+                'Maschine 3',
+                'Maschine 4'
+              ].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
