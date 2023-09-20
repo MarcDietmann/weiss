@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/2022/constants.dart';
 import 'package:weiss_app/machine_provider.dart';
+import 'package:weiss_app/utils/customer_provider.dart';
 import 'package:weiss_app/utils/mqtt_provider.dart';
 import 'package:weiss_app/widgets/rounded_container.dart';
 
 class OverviewScreen extends StatefulWidget {
-  OverviewScreen({Key? key}) : super(key: key);
+  OverviewScreen({Key? key, }) : super(key: key);
 
   @override
   State<OverviewScreen> createState() => _OverviewScreenState();
@@ -14,7 +15,7 @@ class OverviewScreen extends StatefulWidget {
 
 class _OverviewScreenState extends State<OverviewScreen> {
   var selectedDropdownValue = "Alle";
-  List<String> dropdownValues = [
+  List<String> dropdownValues =  [
     "Alle",
     "Sortiert nach Unternehmen",
     "Sortiert nach Standort",
@@ -22,8 +23,18 @@ class _OverviewScreenState extends State<OverviewScreen> {
     "Sortiert nach Reperaturdatum"
   ];
 
+  _OverviewScreenState();
+
   @override
   Widget build(BuildContext context) {
+    if(Provider.of<CustomerProvider>(context).isCustomer){
+      dropdownValues = [
+        "Alle",
+        "Sortiert nach Standort",
+        "Sortiert nach Maschinenart",
+        "Sortiert nach Reperaturdatum"
+      ];
+    }
     return Scaffold(
       body: ListView(
         children: [
@@ -37,15 +48,15 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   child: Row(
                     children: [
                       Image.asset(
-                        "assets/images/logo_high_res.png",
+                        Provider.of<CustomerProvider>(context).isCustomer?"assets/images/logo_customer.png":"assets/images/logo_high_res.png",
                         height: 150,
                       ),
                       SizedBox(
                         width: 8,
                       ),
                       Text(
-                        "Maschinenübersicht",
-                        style: kHeadingStyle.copyWith(fontSize: 80),
+                        Provider.of<CustomerProvider>(context).isCustomer?"Deine Maschinen von Weiss":"Maschinenübersicht",
+                        style: kHeadingStyle.copyWith(fontSize: Provider.of<CustomerProvider>(context).isCustomer?60:80),
                       ),
                     ],
                   ),
@@ -73,7 +84,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   ),
                 ),
                 ...Provider.of<MachineData>(context, listen: true).machines,
-                Padding(
+                !Provider.of<CustomerProvider>(context).isCustomer?SizedBox():Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: RoundedContainer(
                     height: 300,
@@ -92,15 +103,18 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 Spacer(),
                 GestureDetector(
                     onTap: () {
-                      Provider.of<MQTTProvider>(context,listen: false).isConnected?
-                      Provider.of<MQTTProvider>(context, listen: false).disconnect():
-                      Provider.of<MQTTProvider>(context, listen: false).startConnection();
+                      Provider.of<MQTTProvider>(context, listen: false)
+                              .isConnected
+                          ? Provider.of<MQTTProvider>(context, listen: false)
+                              .disconnect()
+                          : Provider.of<MQTTProvider>(context, listen: false)
+                              .startConnection();
                     },
                     child: RoundedContainer(
                       color: Colors.blue,
                       child: Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4),
                         child: Text(
                           Provider.of<MQTTProvider>(context).isConnected
                               ? "Trennen"
@@ -108,7 +122,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           style: kTextStyle.copyWith(color: Colors.white),
                         ),
                       ),
-                    )),Spacer(),
+                    )),
+                SizedBox(width: 8,),
+                GestureDetector(
+                    onTap: () {
+                      Provider.of<CustomerProvider>(context,listen: false).toggleCustomer();
+                    },
+                    child: RoundedContainer(
+                      color: Colors.blue,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4),
+                        child: Text("Zur " + (Provider.of<CustomerProvider>(context).isCustomer
+                              ? "Weiss"
+                              : "Kunden") + "-Sicht wechseln",
+                          style: kTextStyle.copyWith(color: Colors.white),
+                        ),
+                      ),
+                    )),
+                Spacer(),
               ],
             ),
           )
@@ -180,79 +212,102 @@ class _MyWidgetState extends State<MyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          "Neue Maschine hinzufügen",
-          style: TextStyle(
-              fontSize: 20), // Ersetzen Sie dies durch Ihren kSubHeadingStyle
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: _ipAddressController,
-            decoration: InputDecoration(labelText: 'IP-Adresse'),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "Neue Maschine hinzufügen",
+            style:
+                kSubHeadingStyle, // Ersetzen Sie dies durch Ihren kSubHeadingStyle
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Kunde: "),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _ipAddressController,
+              decoration: InputDecoration(labelText: 'IP-Adresse'),
             ),
-            DropdownButton<String>(
-              value: _customer,
-              items: ['Dr. Oetker', 'Wagner', 'Kunde 3', 'Kunde 4']
-                  .map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _customer = newValue!;
-                });
-              },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Kunde: "),
+              ),
+              DropdownButton<String>(
+                value: _customer,
+                items: ['Dr. Oetker', 'Wagner', 'Kunde 3', 'Kunde 4']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _customer = newValue!;
+                  });
+                },
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Maschine: "),
+              ),
+              DropdownButton<String>(
+                value: _machineType,
+                items: [
+                  'TC Rundschalttisch',
+                  'Maschine 2',
+                  'Maschine 3',
+                  'Maschine 4'
+                ].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _machineType = newValue!;
+                  });
+                },
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          GestureDetector(
+            onTap: _addMachine,
+            child: RoundedContainer(
+              color: kYellow,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: 200,
+                    child: Row(
+                      children: [
+                        Icon(Icons.add),
+                        SizedBox(width: 8,),
+                        Text(
+              'Maschine hinzufügen',
+              style: kSubHeadingStyle.copyWith(color: Colors.black),
             ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Maschine: "),
-            ),
-            DropdownButton<String>(
-              value: _machineType,
-              items: [
-                'TC Rundschalttisch',
-                'Maschine 2',
-                'Maschine 3',
-                'Maschine 4'
-              ].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _machineType = newValue!;
-                });
-              },
-            ),
-          ],
-        ),
-        ElevatedButton(
-          onPressed: _addMachine,
-          child: Text('Maschine hinzufügen'),
-        ),
-      ],
+                      ],
+                    ),
+                  ),
+                )),
+          ),
+        ],
+      ),
     );
   }
 }

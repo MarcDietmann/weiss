@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/machine_provider.dart';
 import 'package:weiss_app/overview_screen.dart';
+import 'package:weiss_app/utils/customer_provider.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
 import 'package:weiss_app/utils/llm_wrapper.dart';
 import 'package:weiss_app/utils/mqtt_provider.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       ChangeNotifierProvider(create: (_) => MQTTProvider()),
       ChangeNotifierProvider(create: (_) => LLMWrapper()),
       ChangeNotifierProvider(create: (_) => MachineData()),
+      ChangeNotifierProvider(create: (_) => CustomerProvider()),
       ChangeNotifierProxyProvider<MQTTProvider,DiagnosticsProvider>(
           create: (_) => DiagnosticsProvider(),
           update: (_, mqttProvider, diagnosticsProvider) {
@@ -57,6 +59,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
     setState(() {
       loading = false;
     });
+    Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
   @override

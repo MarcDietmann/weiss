@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:weiss_app/utils/diagnostics_provider.dart';
 
 class LLMWrapper extends ChangeNotifier {
   bool loading = false;
@@ -32,24 +33,15 @@ class LLMWrapper extends ChangeNotifier {
             "type": "string",
             "description": "request either all or none of the available data"
           },
-
         },
         "required": ["scope"]
       }
-    },{
-      "name": "call_service",
-      "description": "If the system is in a critical state and the first solution does not fix it, call the service",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "person": {
-            "type": "string",
-            "description": "request either all or none of the available data"
-          },
-
-        },
-        "required": ["person"]
-      }
+    },
+    {
+      "name": "get_bounds",
+      "description":
+          "The system has specification lower and upper bounds for each of the available data. Between min and max the value is good. cmin and cmax are critical thresholds.",
+   "parameters":{},
     }
   ];
 
@@ -160,7 +152,13 @@ class LLMWrapper extends ChangeNotifier {
 
   Future<String> callFunction(String name, Map? arguments) async {
     await Future.delayed(Duration(seconds: 1));
-    return "Temperatur: 42 Grad. Vibration in letzer Minute 64. Stromspannung des Motors 13.4 Volt";
+    if(name == "get_current_status"){
+      return "Temperatur: 42 Grad. Vibration in letzer Minute 64. Stromspannung des Motors 13.4 Volt";
+    }
+    if(name =="get_bounds"){
+      return DiagnosticsProvider.bounds.toString();
+    }
+    return "Function $name not implemented";
   }
 
   Future<void> handleErrorMessage(

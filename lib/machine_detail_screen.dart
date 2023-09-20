@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:weiss_app/utils/customer_provider.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
 import 'package:weiss_app/utils/mqtt_provider.dart';
 import 'package:weiss_app/widgets/diagnostics_list.dart';
@@ -13,7 +14,8 @@ import 'package:weiss_app/widgets/rounded_container.dart';
 import '2022/constants.dart';
 
 class MachineDetailScreen extends StatelessWidget {
-  const MachineDetailScreen({Key? key}) : super(key: key);
+  const MachineDetailScreen({Key? key,})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,9 @@ class MachineDetailScreen extends StatelessWidget {
                         Flexible(
                           child: Padding(
                             padding: const EdgeInsets.only(right: 16.0),
-                            child: TCMachineCard(),
+                            child: TCMachineCard(
+                              isCustomer: Provider.of<CustomerProvider>(context).isCustomer,
+                            ),
                           ),
                         ),
                         StatusDisplay(
@@ -70,87 +74,12 @@ class MachineDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(48.0).copyWith(top: 0),
-                child: RoundedContainer(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Datendetails", style: kSubHeadingStyle),
-                        Chart(
-                          title: "Temperatur",
-                          topic: DiagnosticsProvider.temperatureTopic,
-                          ytitle: "Grad Celsius",
-                          mapping: (
-                            Map data,
-                          ) =>
-                              ((data["temperature"] ?? 40.0) as double),
-                        ),
-                        Chart(
-                            title: "Spannung - max",
-                            topic: DiagnosticsProvider.maxVoltageLastCycleTopic,
-                            ytitle: "Volt",
-                            mapping: (
-                              Map data,
-                            ) =>
-                                (data["MaxLastCycle"] as double)),
-                        Chart(
-                            title: "Zeit pro Umdrehung",
-                            topic: DiagnosticsProvider.turnTimeTopic,
-                            ytitle: "Millisekunden",
-                            mapping: (
-                              Map data,
-                            ) =>
-                                ((data["CycleTimeSensorLowToSensorHigh"] ?? 0)
-                                        as int)
-                                    .toDouble()),
-                        Chart(
-                            title: "Vibration",
-                            topic: DiagnosticsProvider.vibrationTopic,
-                            ytitle: "G",
-                            mapping: (
-                              Map data,
-                            ) =>
-                                (data["adxlX"]["Key Values"]
-                                    ["peak_high_frequency"] as double)),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        RoundedContainer(
-                          width: double.infinity,
-
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(48.0),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  size: 48,
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Text(
-                                  "Weitere Diagramme einbinden",
-                                  style: kSubHeadingStyle,
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              Provider.of<CustomerProvider>(context).isCustomer ? SizedBox() : Datendetails(),
             ],
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: !Provider.of<CustomerProvider>(context).isCustomer?SizedBox(): FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
               context,
@@ -170,11 +99,97 @@ class MachineDetailScreen extends StatelessWidget {
   }
 }
 
+class Datendetails extends StatelessWidget {
+  const Datendetails({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(48.0).copyWith(top: 0),
+      child: RoundedContainer(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Datendetails", style: kSubHeadingStyle),
+              Chart(
+                title: "Temperatur",
+                topic: DiagnosticsProvider.temperatureTopic,
+                ytitle: "Grad Celsius",
+                mapping: (
+                  Map data,
+                ) =>
+                    ((data["temperature"] ?? 40.0) as double),
+              ),
+              Chart(
+                  title: "Spannung - max",
+                  topic: DiagnosticsProvider.maxVoltageLastCycleTopic,
+                  ytitle: "Volt",
+                  mapping: (
+                    Map data,
+                  ) =>
+                      (data["MaxLastCycle"] as double)),
+              Chart(
+                  title: "Zeit pro Umdrehung",
+                  topic: DiagnosticsProvider.turnTimeTopic,
+                  ytitle: "Millisekunden",
+                  mapping: (
+                    Map data,
+                  ) =>
+                      ((data["CycleTimeSensorLowToSensorHigh"] ?? 0) as int)
+                          .toDouble()),
+              Chart(
+                  title: "Vibration",
+                  topic: DiagnosticsProvider.vibrationTopic,
+                  ytitle: "G",
+                  mapping: (
+                    Map data,
+                  ) =>
+                      (data["adxlX"]["Key Values"]["peak_high_frequency"]
+                          as double)),
+              SizedBox(
+                height: 8,
+              ),
+              RoundedContainer(
+                width: double.infinity,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(48.0),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.add,
+                        size: 48,
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        "Weitere Diagramme einbinden",
+                        style: kSubHeadingStyle,
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class TCMachineCard extends StatelessWidget {
+  final bool isCustomer;
   final bool onDetailScreen;
   const TCMachineCard({
     super.key,
     this.onDetailScreen = true,
+    required this.isCustomer,
   });
 
   @override
@@ -185,8 +200,11 @@ class TCMachineCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           if (onDetailScreen) return;
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => MachineDetailScreen()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      MachineDetailScreen()));
         },
         child: Hero(
           tag: "machine",
@@ -245,19 +263,76 @@ class TCMachineCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         !onDetailScreen
-                            ? SizedBox():Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: RoundedContainer(color: kYellow, child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              children: [
-                                Icon(Icons.phone,color: Colors.black,),
-                                SizedBox(width: 8,),
-                                Text("Kunden kontaktieren",style: kSubHeadingStyle,),
-                              ],
-                            ),
-                          ),),
-                        ),
+                            ? SizedBox()
+                            : Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    if (!isCustomer) return;
+                                    bool? val = await showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                              title: Text(
+                                                  "Daten mit den Support teilen"),
+                                              content: Text(
+                                                  "Um den Support zu kontaktieren, müssen Sie Ihre Daten mit dem Support teilen. Sind Sie damit einverstanden?"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context, false);
+                                                    },
+                                                    child: Text("Abbrechen",style: kTextStyle,)),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context, true);
+                                                    },
+                                                    child: Text("Senden")),
+                                              ],
+                                            ));
+                                    if (val == true) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                                title: Text(
+                                                    "Daten wurden gesendet"),
+                                                content: Text(
+                                                    "Der Support wird sich innerhalb von 15 minuten bei ihnen melden."),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(
+                                                            context, false);
+                                                      },
+                                                      child: Text("Okay")),
+                                                ],
+                                              ));
+                                    }
+                                  },
+                                  child: RoundedContainer(
+                                    color: kYellow,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.phone,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(
+                                            "${isCustomer ? "Support" : "Kunden"} kontaktieren",
+                                            style: kSubHeadingStyle,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                         Spacer(),
                         Image.asset(
                           "assets/images/tc320t.png",
@@ -320,7 +395,57 @@ class Chart extends StatelessWidget {
               ),
               SfCartesianChart(
                 primaryXAxis: DateTimeAxis(title: AxisTitle(text: "Zeit")),
-                primaryYAxis: NumericAxis(title: AxisTitle(text: ytitle)),
+                primaryYAxis:
+                    NumericAxis(title: AxisTitle(text: ytitle), plotBands: [
+                  PlotBand(
+                    isVisible: true,
+                    start: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, true, false),
+                    end: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, false, false),
+                    color: Colors.green[100]!, // green color for good range
+                    text: 'Good',
+                    textStyle: kTextStyle.copyWith(color: Colors.black),
+                  ),
+                  PlotBand(
+                    isVisible: true,
+                    start: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, true, false),
+                    end: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, true, true),
+                    color: Colors.yellow[100]!, // green color for good range
+                    text: 'Warning',
+                    textStyle: kTextStyle.copyWith(color: Colors.black),
+                  ),
+                  PlotBand(
+                    isVisible: true,
+                    start: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, false, true),
+                    end: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, false, false),
+                    color: Colors.yellow[100]!, // green color for good range
+                    text: 'Warning',
+                    textStyle: kTextStyle.copyWith(color: Colors.black),
+                  ),
+                  PlotBand(
+                    isVisible: true,
+                    start: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, true, true),
+                    end: -double.infinity,
+                    color: Colors.red[100]!, // green color for good range
+                    text: 'Bad',
+                    textStyle: kTextStyle.copyWith(color: Colors.black),
+                  ),
+                  PlotBand(
+                    isVisible: true,
+                    start: double.infinity,
+                    end: Provider.of<DiagnosticsProvider>(context)
+                        .getRangeValue(topic, false, true),
+                    color: Colors.red[100]!, // green color for good range
+                    text: 'Bad',
+                    textStyle: kTextStyle.copyWith(color: Colors.black),
+                  ),
+                ]),
                 series: [
                   LineSeries<Map, DateTime>(
                     dataSource: Provider.of<DiagnosticsProvider>(context)

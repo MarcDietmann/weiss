@@ -20,7 +20,7 @@ class DiagnosticsProvider extends ChangeNotifier {
   List<MachineStatus> machineStatuses = [];
 
   List<String> topics = [];
-  Map<String, Map<String, dynamic>> bounds = {
+  static Map<String, Map<String, dynamic>> bounds = {
     temperatureTopic: {
       "min": 20,
       "max": 50,
@@ -44,6 +44,14 @@ class DiagnosticsProvider extends ChangeNotifier {
       "cmax": 60,
       "low_waring": "Die Vibration ist niedrig.",
       "high_warning": "Die Vibration ist hoch."
+    },
+    turnTimeTopic: {
+      "min": 500,
+      "max": 600,
+      "cmin": 400,
+      "cmax": 700,
+      "low_waring": "Die Drehzeit ist niedrig.",
+      "high_warning": "Die Drehzeit ist hoch."
     },
   };
 
@@ -145,6 +153,14 @@ class DiagnosticsProvider extends ChangeNotifier {
     }
     status.help = status.help + " (${value.toStringAsFixed(2)} $unit)";
     return status;
+  }
+
+  num getRangeValue(String topic, bool min, bool critical){
+    if(min && critical) return bounds[topic]?["cmin"];
+    if(min && !critical) return bounds[topic]?["min"];
+    if(!min && critical) return bounds[topic]?["cmax"];
+    if(!min && !critical) return bounds[topic]?["max"];
+    return 0;
   }
 
   @override
