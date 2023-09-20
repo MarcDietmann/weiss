@@ -12,6 +12,7 @@ class MachineData extends ChangeNotifier{
   }
 
   addMachine(String ip, String type){
+    machines.add(SizedBox(height: 16,));
     machines.add(TCMachineCard(onDetailScreen: false,));
     isAdding= false;
     notifyListeners();
