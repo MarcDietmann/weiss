@@ -84,7 +84,7 @@ class MachineDetailScreen extends StatelessWidget {
 
                         ),
                         Chart(title: "Spannung - max", topic: DiagnosticsProvider.maxVoltageLastCycleTopic, ytitle: "Volt", mapping: (Map data,) => (data["MaxLastCycle"] as double)),
-                      Chart(title: "Zeit pro Umdrehung", topic: DiagnosticsProvider.turnTimeTopic, ytitle: "Millisekunden", mapping: (Map data,) => (data["CycleTimeSensorLowToSensorHigh"] as int).toDouble()),
+                      Chart(title: "Zeit pro Umdrehung", topic: DiagnosticsProvider.turnTimeTopic, ytitle: "Millisekunden", mapping: (Map data,) => ((data["CycleTimeSensorLowToSensorHigh"]??0) as int).toDouble()),
                       Chart(title: "Vibration", topic: DiagnosticsProvider.vibrationTopic, ytitle: "G", mapping: (Map data,) => (data["adxlX"]["Key Values"]["peak_high_frequency"] as double)),
                       ],
                     ),
