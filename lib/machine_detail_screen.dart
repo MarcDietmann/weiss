@@ -207,7 +207,7 @@ class TCMachineCard extends StatelessWidget {
                             ? SizedBox()
                             : Text("", style: kTextStyle),
                         Text("Seriennummer: TC320T", style: kTextStyle),
-                        Text("621242 - Walldürn", style: kTextStyle),
+                        Text("74731 - Walldürn", style: kTextStyle),
                         !onDetailScreen
                             ? SizedBox()
                             : Text("", style: kTextStyle),
