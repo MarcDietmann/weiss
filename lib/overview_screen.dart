@@ -1,4 +1,3 @@
-
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +8,9 @@ import 'package:weiss_app/utils/mqtt_provider.dart';
 import 'package:weiss_app/widgets/rounded_container.dart';
 
 class OverviewScreen extends StatefulWidget {
-  OverviewScreen({Key? key, }) : super(key: key);
+  OverviewScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<OverviewScreen> createState() => _OverviewScreenState();
@@ -17,7 +18,7 @@ class OverviewScreen extends StatefulWidget {
 
 class _OverviewScreenState extends State<OverviewScreen> {
   var selectedDropdownValue = "Alle";
-  List<String> dropdownValues =  [
+  List<String> dropdownValues = [
     "Alle",
     "Sortiert nach Unternehmen",
     "Sortiert nach Standort",
@@ -29,7 +30,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(Provider.of<CustomerProvider>(context).isCustomer){
+    if (Provider.of<CustomerProvider>(context).isCustomer) {
       dropdownValues = [
         "Alle",
         "Sortiert nach Standort",
@@ -50,15 +51,23 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   child: Row(
                     children: [
                       Image.asset(
-                        Provider.of<CustomerProvider>(context).isCustomer?"assets/images/logo_customer.png":"assets/images/logo_high_res.png",
+                        Provider.of<CustomerProvider>(context).isCustomer
+                            ? "assets/images/logo_customer.png"
+                            : "assets/images/logo_high_res.png",
                         height: 150,
                       ),
                       SizedBox(
                         width: 8,
                       ),
                       Text(
-                        Provider.of<CustomerProvider>(context).isCustomer?"Deine Maschinen von Weiss":"Maschinenübersicht",
-                        style: kHeadingStyle.copyWith(fontSize: Provider.of<CustomerProvider>(context).isCustomer?60:80),
+                        Provider.of<CustomerProvider>(context).isCustomer
+                            ? "Deine Maschinen von Weiss"
+                            : "Maschinenübersicht",
+                        style: kHeadingStyle.copyWith(
+                            fontSize: Provider.of<CustomerProvider>(context)
+                                    .isCustomer
+                                ? 60
+                                : 80),
                       ),
                     ],
                   ),
@@ -85,15 +94,34 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     ],
                   ),
                 ),
-                ...Provider.of<MachineData>(context, listen: true).machines,
-                !Provider.of<CustomerProvider>(context).isCustomer?SizedBox():Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: RoundedContainer(
-                    height: 300,
-                    width: 600,
-                    child: AddMachineButton(),
-                  ),
-                ),
+                (!Provider.of<CustomerProvider>(context, listen: false)
+                            .isCustomer &&
+                        Provider.of<CustomerProvider>(context).dataShared ==
+                            false)
+                    ? RoundedContainer(
+                        child: Padding(
+                          padding: const EdgeInsets.all(48.0),
+                          child: Center(
+                              child: Text(
+                          "Keine Machinendaten verfügbar",
+                          style: kSubHeadingStyle,
+                      )),
+                        ))
+                    : Column(
+                        children:
+                            Provider.of<MachineData>(context, listen: true)
+                                .machines,
+                      ),
+                !Provider.of<CustomerProvider>(context).isCustomer
+                    ? SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: RoundedContainer(
+                          height: 300,
+                          width: 600,
+                          child: AddMachineButton(),
+                        ),
+                      ),
               ],
             ),
           ),
@@ -113,7 +141,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               .startConnection();
                     },
                     child: RoundedContainer(
-                      color: Colors.blue,
+                      color: Colors.grey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12.0, vertical: 4),
@@ -125,36 +153,48 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         ),
                       ),
                     )),
-                SizedBox(width: 8,),
+                SizedBox(
+                  width: 8,
+                ),
                 GestureDetector(
                     onTap: () {
-                      Provider.of<CustomerProvider>(context,listen: false).toggleCustomer();
+                      Provider.of<CustomerProvider>(context, listen: false)
+                          .toggleCustomer();
                     },
                     child: RoundedContainer(
-                      color: Colors.blue,
+                      color: Colors.grey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12.0, vertical: 4),
-                        child: Text("Zur " + (Provider.of<CustomerProvider>(context).isCustomer
-                              ? "Weiss"
-                              : "Kunden") + "-Sicht wechseln",
+                        child: Text(
+                          "Zur " +
+                              (Provider.of<CustomerProvider>(context).isCustomer
+                                  ? "Weiss"
+                                  : "Kunden") +
+                              "-Sicht wechseln",
                           style: kTextStyle.copyWith(color: Colors.white),
                         ),
                       ),
                     )),
-                SizedBox(width: 8,),
+                SizedBox(
+                  width: 8,
+                ),
                 GestureDetector(
                     onTap: () async {
-                       Firestore.instance.collection("machines").stream.listen((event) {
+                      Firestore.instance
+                          .collection("machines")
+                          .stream
+                          .listen((event) {
                         print(event);
                       });
                     },
                     child: RoundedContainer(
-                      color: Colors.blue,
+                      color: Colors.grey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12.0, vertical: 4),
-                        child: Text("Firebase",
+                        child: Text(
+                          "Firebase",
                           style: kTextStyle.copyWith(color: Colors.white),
                         ),
                       ),
@@ -307,7 +347,7 @@ class _MyWidgetState extends State<MyWidget> {
           GestureDetector(
             onTap: _addMachine,
             child: RoundedContainer(
-              color: kYellow,
+                color: kYellow,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -315,11 +355,13 @@ class _MyWidgetState extends State<MyWidget> {
                     child: Row(
                       children: [
                         Icon(Icons.add),
-                        SizedBox(width: 8,),
+                        SizedBox(
+                          width: 8,
+                        ),
                         Text(
-              'Maschine hinzufügen',
-              style: kSubHeadingStyle.copyWith(color: Colors.black),
-            ),
+                          'Maschine hinzufügen',
+                          style: kSubHeadingStyle.copyWith(color: Colors.black),
+                        ),
                       ],
                     ),
                   ),

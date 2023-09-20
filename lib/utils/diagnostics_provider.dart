@@ -34,8 +34,8 @@ class DiagnosticsProvider extends ChangeNotifier {
       "max": 0.6,
       "cmin": 0,
       "cmax": 1,
-      "low_waring": "Die Spannung ist niedrig.",
-      "high_warning": "Die Spannung ist hoch."
+      "low_waring": "Die Stromstärke ist niedrig.",
+      "high_warning": "Die Stromstärke ist hoch."
     },
     vibrationTopic: {
       "min": 0,
@@ -46,10 +46,10 @@ class DiagnosticsProvider extends ChangeNotifier {
       "high_warning": "Die Vibration ist hoch."
     },
     turnTimeTopic: {
-      "min": 500,
-      "max": 600,
-      "cmin": 400,
-      "cmax": 700,
+      "min": 400,
+      "max": 500,
+      "cmin": 300,
+      "cmax": 600,
       "low_waring": "Die Drehzeit ist niedrig.",
       "high_warning": "Die Drehzeit ist hoch."
     },
@@ -116,11 +116,11 @@ class DiagnosticsProvider extends ChangeNotifier {
     List<MachineStatus> statuses = [];
     statuses.add(getStatusForTopic(
         temperatureTopic, "Temperatur", "°C", (data) => data["temperature"]));
-    statuses.add(getStatusForTopic(maxVoltageLastCycleTopic, "Spannung", "V",
+    statuses.add(getStatusForTopic(maxVoltageLastCycleTopic, "Stromstärke", "A",
         (data) => data["MaxLastCycle"]));
-    statuses.add(getStatusForTopic(vibrationTopic, "Vibration", "m/s²",
+    statuses.add(getStatusForTopic(vibrationTopic, "Vibration", "",
         (data) => data["adxlX"]["Key Values"]["peak_high_frequency"]));
-    // statuses.add(getStatusForTopic(temperatureTopic, "Temperatur", (data)=>data["temperature"]));
+    statuses.add(getStatusForTopic(turnTimeTopic, "Dauer der Drehung", "ms", (data)=>data["CycleTimeSensorLowToSensorHigh"]/1000));
     machineStatuses = statuses;
     return statuses;
   }

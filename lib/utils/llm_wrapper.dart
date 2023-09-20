@@ -11,14 +11,14 @@ class LLMWrapper extends ChangeNotifier {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization':
-        'Bearer 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'
+        'Bearer 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'
   };
 
   List<Map<String, dynamic>> messages = [
     {
       "role": "system",
       "content":
-          "Du bist ein Hilfechatbot um unseren Kunden bei Problemen an Produktionsmachinen zu helfen. Wenn Daten in einen kritischen Bereich kommen kann es zu schäden an der Maschine kommen und eine schneller Reperatur ist von nöten. Kritische bereiche: Temperatur > 40 Grad; Vibration > 10; Druck > 1000; Drehzahl > 1000; Strom > 1000; Spannung > 12 Volt; "
+          "Du bist ein Hilfechatbot um unseren Kunden bei Problemen an Produktionsmachinen zu helfen. Gib knappe Handlungsempfehlungen. Wenn Daten in einen kritischen Bereich kommen kann es zu schäden an der Maschine kommen und eine schneller Reperatur ist von nöten. Bounds cmin bedeuted kritisches min, cmax kritisches max:${DiagnosticsProvider.bounds.toString()}; "
     },
   ];
 
@@ -37,12 +37,20 @@ class LLMWrapper extends ChangeNotifier {
         "required": ["scope"]
       }
     },
-    {
-      "name": "get_bounds",
-      "description":
-          "The system has specification lower and upper bounds for each of the available data. Between min and max the value is good. cmin and cmax are critical thresholds.",
-   "parameters":{},
-    }
+    // {
+    //   "name": "get_bounds",
+    //   "description":
+    //       "The system has specification lower and upper bounds for each of the available data. Between min and max the value is good. cmin and cmax are critical thresholds.",
+    //   "parameters": {
+    //     "properties": {
+    //       "scope": {
+    //         "type": "string",
+    //         "description": "request either all or none of the available data"
+    //       },
+    //     },
+    //     "required": ["scope"]
+    //   },
+    // }
   ];
 
   void completeChat({String? newPromptText}) async {
@@ -59,7 +67,7 @@ class LLMWrapper extends ChangeNotifier {
       "model": "gpt-4",
       "messages": getMessagesForTransfer(),
       "functions": functions,
-      "temperature": 0.2,
+      "temperature": 0,
       "top_p": 1,
       "n": 1,
       "stream": true,
@@ -152,10 +160,10 @@ class LLMWrapper extends ChangeNotifier {
 
   Future<String> callFunction(String name, Map? arguments) async {
     await Future.delayed(Duration(seconds: 1));
-    if(name == "get_current_status"){
+    if (name == "get_current_status") {
       return "Temperatur: 42 Grad. Vibration in letzer Minute 64. Stromspannung des Motors 13.4 Volt";
     }
-    if(name =="get_bounds"){
+    if (name == "get_bounds") {
       return DiagnosticsProvider.bounds.toString();
     }
     return "Function $name not implemented";

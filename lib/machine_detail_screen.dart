@@ -140,7 +140,7 @@ class Datendetails extends StatelessWidget {
               Chart(
                   title: "Spannung - max",
                   topic: DiagnosticsProvider.maxVoltageLastCycleTopic,
-                  ytitle: "Volt",
+                  ytitle: "Ampere",
                   mapping: (
                     Map data,
                   ) =>
@@ -157,7 +157,7 @@ class Datendetails extends StatelessWidget {
               Chart(
                   title: "Vibration",
                   topic: DiagnosticsProvider.vibrationTopic,
-                  ytitle: "G",
+                  ytitle: "",
                   mapping: (
                     Map data,
                   ) =>
