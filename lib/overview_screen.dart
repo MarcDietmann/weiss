@@ -1,3 +1,5 @@
+
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/2022/constants.dart';
@@ -136,6 +138,23 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         child: Text("Zur " + (Provider.of<CustomerProvider>(context).isCustomer
                               ? "Weiss"
                               : "Kunden") + "-Sicht wechseln",
+                          style: kTextStyle.copyWith(color: Colors.white),
+                        ),
+                      ),
+                    )),
+                SizedBox(width: 8,),
+                GestureDetector(
+                    onTap: () async {
+                       Firestore.instance.collection("machines").stream.listen((event) {
+                        print(event);
+                      });
+                    },
+                    child: RoundedContainer(
+                      color: Colors.blue,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4),
+                        child: Text("Firebase",
                           style: kTextStyle.copyWith(color: Colors.white),
                         ),
                       ),

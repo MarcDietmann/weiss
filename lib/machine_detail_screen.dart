@@ -6,7 +6,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:weiss_app/utils/customer_provider.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
+import 'package:weiss_app/utils/llm_wrapper.dart';
 import 'package:weiss_app/utils/mqtt_provider.dart';
+import 'package:weiss_app/widgets/chat_messages.dart';
 import 'package:weiss_app/widgets/diagnostics_list.dart';
 import 'package:weiss_app/widgets/helper_chat.dart';
 import 'package:weiss_app/widgets/rounded_container.dart';
@@ -14,8 +16,9 @@ import 'package:weiss_app/widgets/rounded_container.dart';
 import '2022/constants.dart';
 
 class MachineDetailScreen extends StatelessWidget {
-  const MachineDetailScreen({Key? key,})
-      : super(key: key);
+  const MachineDetailScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,8 @@ class MachineDetailScreen extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 16.0),
                             child: TCMachineCard(
-                              isCustomer: Provider.of<CustomerProvider>(context).isCustomer,
+                              isCustomer: Provider.of<CustomerProvider>(context)
+                                  .isCustomer,
                             ),
                           ),
                         ),
@@ -74,27 +78,36 @@ class MachineDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Provider.of<CustomerProvider>(context).isCustomer ? SizedBox() : Datendetails(),
+              Provider.of<CustomerProvider>(context).isCustomer
+                  ? SizedBox()
+                  : Datendetails(),
+              Provider.of<CustomerProvider>(context).isCustomer
+                  ? SizedBox()
+                  : ChatHistory(
+                      messages: context.watch<CustomerProvider>().messages,
+                    ),
             ],
           ),
         ],
       ),
-      floatingActionButton: !Provider.of<CustomerProvider>(context).isCustomer?SizedBox(): FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatScreen(
-                        title: 'Chat with Weiss AI Wizzard',
-                      )));
-        },
-        label: Text(
-          "Weiss AI Wizzard",
-          style: kSubHeadingStyle,
-        ),
-        icon: Icon(Icons.chat),
-        backgroundColor: kYellow,
-      ),
+      floatingActionButton: !Provider.of<CustomerProvider>(context).isCustomer
+          ? SizedBox()
+          : FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+                              title: 'Chat with Weiss AI Wizzard',
+                            )));
+              },
+              label: Text(
+                "Weiss AI Wizzard",
+                style: kSubHeadingStyle,
+              ),
+              icon: Icon(Icons.chat),
+              backgroundColor: kYellow,
+            ),
     );
   }
 }
@@ -107,7 +120,7 @@ class Datendetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(48.0).copyWith(top: 0),
+      padding: const EdgeInsets.all(48.0).copyWith(top: 0,bottom: 16),
       child: RoundedContainer(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -183,6 +196,42 @@ class Datendetails extends StatelessWidget {
   }
 }
 
+class ChatHistory extends StatelessWidget {
+  final List messages;
+  const ChatHistory({Key? key, required this.messages}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(48.0).copyWith(top: 0),
+      child: RoundedContainer(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("Wizzard Chatverlauf", style: kSubHeadingStyle),
+                Column(
+                  children: [
+                    for (int index = 0; index < messages.length + (context.read<LLMWrapper>().loading ? 1 : 0); index++)
+                      if (index == messages.length)
+                        Container(
+                          height: 50,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      else
+                        ChatMessage.fromMap(messages[index]),
+                  ],
+                ),
+
+              ]),
+        ),
+      ),
+    );
+  }
+}
+
 class TCMachineCard extends StatelessWidget {
   final bool isCustomer;
   final bool onDetailScreen;
@@ -200,11 +249,8 @@ class TCMachineCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           if (onDetailScreen) return;
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      MachineDetailScreen()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => MachineDetailScreen()));
         },
         child: Hero(
           tag: "machine",
@@ -282,9 +328,21 @@ class TCMachineCard extends StatelessWidget {
                                                       Navigator.pop(
                                                           context, false);
                                                     },
-                                                    child: Text("Abbrechen",style: kTextStyle,)),
+                                                    child: Text(
+                                                      "Abbrechen",
+                                                      style: kTextStyle,
+                                                    )),
                                                 TextButton(
                                                     onPressed: () {
+                                                      Provider.of<CustomerProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .shareData(Provider
+                                                                  .of<LLMWrapper>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                              .messages);
                                                       Navigator.pop(
                                                           context, true);
                                                     },

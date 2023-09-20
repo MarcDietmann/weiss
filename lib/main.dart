@@ -1,3 +1,4 @@
+import 'package:firedart/firedart.dart' as firedart;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/machine_provider.dart';
@@ -9,25 +10,30 @@ import 'package:weiss_app/utils/mqtt_provider.dart';
 
 import 'machine_detail_screen.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // This is important
+  await firedart.Firestore.initialize(
+      "weiss-a8e78");
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-      ChangeNotifierProvider(create: (_) => MQTTProvider()),
-      ChangeNotifierProvider(create: (_) => LLMWrapper()),
-      ChangeNotifierProvider(create: (_) => MachineData()),
-      ChangeNotifierProvider(create: (_) => CustomerProvider()),
-      ChangeNotifierProxyProvider<MQTTProvider,DiagnosticsProvider>(
-          create: (_) => DiagnosticsProvider(),
-          update: (_, mqttProvider, diagnosticsProvider) {
-            if(diagnosticsProvider==null)return DiagnosticsProvider();
-            diagnosticsProvider.mqttProvider = mqttProvider;
-            return diagnosticsProvider;
-          })
-    ],
+        ChangeNotifierProvider(create: (_) => MQTTProvider()),
+        ChangeNotifierProvider(create: (_) => LLMWrapper()),
+        ChangeNotifierProvider(create: (_) => MachineData()),
+        ChangeNotifierProvider(create: (_) => CustomerProvider()),
+        ChangeNotifierProxyProvider<MQTTProvider, DiagnosticsProvider>(
+            create: (_) => DiagnosticsProvider(),
+            update: (_, mqttProvider, diagnosticsProvider) {
+              if (diagnosticsProvider == null) return DiagnosticsProvider();
+              diagnosticsProvider.mqttProvider = mqttProvider;
+              return diagnosticsProvider;
+            })
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
@@ -56,12 +62,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
     super.initState();
     Provider.of<MQTTProvider>(context, listen: false).init();
     Provider.of<DiagnosticsProvider>(context, listen: false).init();
+    Provider.of<CustomerProvider>(context, listen: false).init();
     setState(() {
       loading = false;
     });
-    Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
   }
 
   @override
