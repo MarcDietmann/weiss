@@ -26,32 +26,32 @@ class DiagnosticsProvider extends ChangeNotifier {
       "max": 50,
       "cmin": 0,
       "cmax": 100,
-      "low_waring": "Die Temperatur ist niedrig.",
-      "high_warning": "Die Temperatur ist hoch."
+      "low_waring": "Die Temperatur ist zu niedrig.",
+      "high_warning": "Die Temperatur ist  zu hoch."
     },
     maxVoltageLastCycleTopic: {
       "min": 0.3,
       "max": 0.6,
       "cmin": 0,
       "cmax": 1,
-      "low_waring": "Die Stromstärke ist niedrig.",
-      "high_warning": "Die Stromstärke ist hoch."
+      "low_waring": "Die Stromstärke ist zu niedrig.",
+      "high_warning": "Die Stromstärke ist  zu hoch."
     },
     vibrationTopic: {
       "min": 0,
       "max": 30,
       "cmin": 0,
       "cmax": 60,
-      "low_waring": "Die Vibration ist niedrig.",
-      "high_warning": "Die Vibration ist hoch."
+      "low_waring": "Die Vibration ist zu niedrig.",
+      "high_warning": "Die Vibration ist zu hoch."
     },
     turnTimeTopic: {
       "min": 400,
       "max": 500,
       "cmin": 300,
       "cmax": 600,
-      "low_waring": "Die Drehzeit ist niedrig.",
-      "high_warning": "Die Drehzeit ist hoch."
+      "low_waring": "Die Drehzeit ist zu niedrig.",
+      "high_warning": "Die Drehzeit ist zu hoch."
     },
   };
 

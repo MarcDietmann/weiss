@@ -33,70 +33,87 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: SizedBox(
-          width: chatWidth,
-          child: Container(
-            height: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: messages.length + (context.read<LLMWrapper>().loading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == messages.length) {
-                        return Container(
-                          height: 50,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      return ChatMessage.fromMap(messages[index]);
-                    },
-                  ),
-                ),
-
-                !isFirstRequest?SizedBox(): Text("Vorschläge:",style: kSubHeadingStyle,),
-                !isFirstRequest?SizedBox(): ChatSuggestion(suggestionText: "Erkläre mir was mit meiner Maschine los ist.",onTap: onTap,),
-                !isFirstRequest?SizedBox(): ChatSuggestion(suggestionText: "Was müsste ich machen, um die Maschine zu reparieren.",onTap: onTap,),
-                !isFirstRequest?SizedBox(): ChatSuggestion(suggestionText: "Was ist passiert?",onTap: onTap,),
-                SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: kYellow.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8.0),
+      body: Row(
+        children: [
+          Spacer(),
+          Center(
+            child: SizedBox(
+              width: chatWidth,
+              child: Container(
+                height: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: messages.length + (context.read<LLMWrapper>().loading ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == messages.length) {
+                            return Container(
+                              height: 50,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          return ChatMessage.fromMap(messages[index]);
+                        },
+                      ),
                     ),
-                    child: TextField(
-                      controller: textEditingController,
-                      onEditingComplete: onEditingComplete,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.black, width: 2.0),
+
+                    !isFirstRequest?SizedBox(): Text("Vorschläge:",style: kSubHeadingStyle,),
+                    !isFirstRequest?SizedBox(): ChatSuggestion(suggestionText: "Erkläre mir was mit meiner Maschine los ist.",onTap: onTap,),
+                    !isFirstRequest?SizedBox(): ChatSuggestion(suggestionText: "Was müsste ich machen, um die Maschine zu reparieren.",onTap: onTap,),
+                    !isFirstRequest?SizedBox(): ChatSuggestion(suggestionText: "Was ist passiert?",onTap: onTap,),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: kYellow.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.black, width: 2.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.black, width: 2.0),
+                        child: TextField(
+                          controller: textEditingController,
+                          onEditingComplete: onEditingComplete,
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.black, width: 2.0),
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.black, width: 2.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.black, width: 2.0),
+                            ),
+                          ),
+                          // maxLines: 5,
                         ),
                       ),
-                      // maxLines: 5,
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          Expanded(
+            child: Column(children: [
+              Spacer(),
+              GestureDetector(
+                onTap: (){
+                  context.read<LLMWrapper>().changeToken();
+                }
+                ,
+                child: Text("Change Token",style: kSubHeadingStyle.copyWith(color: Colors.grey),),
+              )
+            ],),
+          ),
+        ],
       ),
     );
 

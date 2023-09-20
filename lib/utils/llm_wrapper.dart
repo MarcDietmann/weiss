@@ -11,9 +11,10 @@ class LLMWrapper extends ChangeNotifier {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization':
-        'Bearer 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'
+        'Bearer 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'
   };
-
+  List<String> token = ["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","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","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"];
+  int currentToken = 0;
   List<Map<String, dynamic>> messages = [
     {
       "role": "system",
@@ -52,6 +53,14 @@ class LLMWrapper extends ChangeNotifier {
     //   },
     // }
   ];
+
+  String _getCurrentToken(){
+    return token[currentToken];
+  }
+  void changeToken(){
+    currentToken = (currentToken+1)%token.length;
+    headers["Authorization"] = "Bearer ${_getCurrentToken()}";
+  }
 
   void completeChat({String? newPromptText}) async {
     if (newPromptText != null) {
@@ -244,4 +253,6 @@ class LLMWrapper extends ChangeNotifier {
   final Random _rnd = Random();
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
+
 }
