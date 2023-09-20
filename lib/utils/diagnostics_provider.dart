@@ -44,4 +44,16 @@ class DiagnosticsProvider extends ChangeNotifier {
   List<Map> getData(String topic) {
     return _data[topic] ?? [];
   }
+
+  Map getLatestValue(String topic) {
+    if (_data[topic] == null) return {};
+    return _data[topic]!.last;
+  }
+  @override
+  void dispose() {
+      super.dispose();
+      for(String topic in topics){
+        mqttProvider?.unsubscribeFromTopic(topic);
+      }
+  }
 }

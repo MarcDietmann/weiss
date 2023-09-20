@@ -16,8 +16,7 @@ class MachineDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      ),
+      appBar: AppBar(),
       body: ListView(
         children: [
           Column(
@@ -94,49 +93,17 @@ class MachineDetailScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Data", style: kSubHeadingStyle),
-                        SfCartesianChart(
-                          primaryXAxis:
-                              DateTimeAxis(title: AxisTitle(text: 'Time')),
-                          primaryYAxis: NumericAxis(
-                              title: AxisTitle(text: 'Temperature')),
-                          series: [
-                            LineSeries<Map, DateTime>(
-                              dataSource:
-                                  Provider.of<DiagnosticsProvider>(context)
-                                      .getData(
-                                          DiagnosticsProvider.temperatureTopic),
-                              xValueMapper: (Map data, _) =>
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      data["julian_timestamp"]),
-                              yValueMapper: (Map data, _) =>
-                                  data["temperature"],
-                              name: 'Temperature',
-                              markerSettings: MarkerSettings(isVisible: true),
-                            )
-                          ],
+                        Text("Datendetails", style: kSubHeadingStyle),
+                        Chart(
+                          title: "Temperatur",
+                          topic: DiagnosticsProvider.temperatureTopic,
+                          ytitle: "Grad Celsius", mapping: (Map data,) => (data["temperature"] as double),
+
                         ),
-                        SfCartesianChart(
-                          primaryXAxis:
-                              DateTimeAxis(title: AxisTitle(text: 'Time')),
-                          primaryYAxis:
-                              NumericAxis(title: AxisTitle(text: 'vibration')),
-                          series: [
-                            LineSeries<Map, DateTime>(
-                              dataSource: Provider.of<DiagnosticsProvider>(
-                                      context)
-                                  .getData(DiagnosticsProvider.vibrationTopic),
-                              xValueMapper: (Map data, _) =>
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      data["julian_timestamp"]),
-                              yValueMapper: (Map data, _) => data["adxlX"]
-                                  ["Key Values"]["peak_high_frequency"],
-                              name: 'Vibration',
-                              markerSettings: MarkerSettings(isVisible: true),
-                            )
-                          ],
-                        ),
+                        Chart(title: "Spannung - max", topic: DiagnosticsProvider.maxVoltageLastCycleTopic, ytitle: "Volt", mapping: (Map data,) => (data["MaxLastCycle"] as double)),
+                      Chart(title: "Zeit pro Umdrehung", topic: DiagnosticsProvider.turnTimeTopic, ytitle: "Millisekunden", mapping: (Map data,) => (data["CycleTimeSensorLowToSensorHigh"] as int).toDouble()),
                       ],
                     ),
                   ),
@@ -155,7 +122,10 @@ class MachineDetailScreen extends StatelessWidget {
                         title: 'Chat with Weiss AI Wizzard',
                       )));
         },
-        label: Text("Hilfe Chat",style: kSubHeadingStyle,),
+        label: Text(
+          "Weiss AI Wizzard",
+          style: kSubHeadingStyle,
+        ),
         icon: Icon(Icons.chat),
         backgroundColor: kYellow,
       ),
@@ -166,17 +136,18 @@ class MachineDetailScreen extends StatelessWidget {
 class TCMachineCard extends StatelessWidget {
   final bool onDetailScreen;
   const TCMachineCard({
-    super.key, this.onDetailScreen = true,
+    super.key,
+    this.onDetailScreen = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    double height = onDetailScreen?double.infinity:200;
+    double height = onDetailScreen ? double.infinity : 200;
     return Container(
       height: height,
       child: GestureDetector(
         onTap: () {
-          if(onDetailScreen)return;
+          if (onDetailScreen) return;
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => MachineDetailScreen()));
         },
@@ -189,17 +160,34 @@ class TCMachineCard extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("TC Rundschalttisch", style: kHeadingStyle),
                         Text("ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
                             style: kTextStyle),
-                        Text("", style: kTextStyle),
+                        !onDetailScreen
+                            ? SizedBox()
+                            : Text("", style: kTextStyle),
+                        Text("Seriennummer: TC320T", style: kTextStyle),
                         Text("621242 - Walldürn", style: kTextStyle),
-                        Text("Nächste Reperatur: 20.12.2024",
+                        !onDetailScreen
+                            ? SizedBox()
+                            : Text("", style: kTextStyle),
+                        Text("Nächste Reperatur vorraussichtlich: 01.10.2031",
                             style: kSubHeadingStyle),
+                        !onDetailScreen
+                            ? SizedBox()
+                            : Text(
+                                "Gesamte Umdrehungen: ${Provider.of<DiagnosticsProvider>(context).getLatestValue(DiagnosticsProvider.totalCycleTopic)["CycleCount"]}",
+                                style: kTextStyle),
+                        !onDetailScreen
+                            ? SizedBox()
+                            : Text("Montage: 01.10.2011", style: kTextStyle),
+                        !onDetailScreen
+                            ? SizedBox()
+                            : Text("Letzte Reperatur: 22.06.2022",
+                                style: kTextStyle),
                       ],
                     ),
                     // Spacer(
@@ -207,9 +195,13 @@ class TCMachineCard extends StatelessWidget {
                     // ),
                     Image.asset(
                       "assets/images/tc320t.png",
-                      height: min(200,height*0.7),
+                      height: min(200, height * 0.7),
                     ),
-                    onDetailScreen?SizedBox():StatusDisplay(small: !onDetailScreen,),
+                    onDetailScreen
+                        ? SizedBox()
+                        : StatusDisplay(
+                            small: !onDetailScreen,
+                          ),
                   ],
                 ),
               ),
@@ -221,10 +213,59 @@ class TCMachineCard extends StatelessWidget {
   }
 }
 
+class Chart extends StatelessWidget {
+  final String title;
+  final String topic;
+  final double Function(Map) mapping;
+  final String ytitle;
+  const Chart(
+      {Key? key,
+      required this.title,
+      required this.topic,
+      required this.mapping,
+      required this.ytitle,})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top:8.0, left: 4, right: 4),
+      child: RoundedContainer(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: kSubHeadingStyle),
+              SfCartesianChart(
+                primaryXAxis: DateTimeAxis(title: AxisTitle(text:"Zeit" )),
+                primaryYAxis: NumericAxis(title: AxisTitle(text: ytitle)),
+                series: [
+                  LineSeries<Map, DateTime>(
+                    dataSource:
+                        Provider.of<DiagnosticsProvider>(context).getData(topic),
+                    xValueMapper: (Map data, _) =>
+                        DateTime.fromMillisecondsSinceEpoch(
+                            data["julian_timestamp"]),
+                    yValueMapper: (Map data, _) => mapping(data),
+                    name: title,
+                    markerSettings: MarkerSettings(isVisible: true),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class StatusDisplay extends StatelessWidget {
   final MachineStatus? status;
   final bool small;
-  const StatusDisplay({super.key, this.status,  this.small = false});
+  const StatusDisplay({super.key, this.status, this.small = false});
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +275,7 @@ class StatusDisplay extends StatelessWidget {
     } else if (status == MachineStatus.warning) {
       color = Colors.yellow;
     }
-    double height = small?100:250;
+    double height = small ? 100 : 250;
 
     return RoundedContainer(
       color: color.withOpacity(0.3),
@@ -256,7 +297,7 @@ class StatusDisplay extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: CircularProgressIndicator(
-                        strokeWidth: small?5:10,
+                        strokeWidth: small ? 5 : 10,
                         value: 1,
                         color: color,
                       ),
@@ -264,19 +305,18 @@ class StatusDisplay extends StatelessWidget {
                   ),
                 ),
                 Icon(
-                  status == MachineStatus.bad
-                      ? Icons.heart_broken_sharp
-                      : status == MachineStatus.warning
-                          ? Icons.warning
-                          : Icons.gpp_good,
-                  color: color,
-                  size: small?50:100
-                )
+                    status == MachineStatus.bad
+                        ? Icons.heart_broken_sharp
+                        : status == MachineStatus.warning
+                            ? Icons.warning
+                            : Icons.gpp_good,
+                    color: color,
+                    size: small ? 50 : 100)
               ],
             ),
             Text(
               "${status == MachineStatus.bad ? "Schlecht" : status == MachineStatus.warning ? "Warnung" : "Gut"}",
-              style: small?kSubHeadingStyle:kHeadingStyle,
+              style: small ? kSubHeadingStyle : kHeadingStyle,
             )
           ],
         ),
