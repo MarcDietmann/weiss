@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
 import 'package:weiss_app/widgets/diagnostics_list.dart';
 import 'package:weiss_app/widgets/helper_chat.dart';
@@ -172,6 +173,13 @@ class TCMachineCard extends StatelessWidget {
                               ? SizedBox()
                               : Text("Letzte Reperatur: 22.06.2022",
                                   style: kTextStyle),
+                          Spacer(),
+                          !onDetailScreen
+                              ? SizedBox()
+                              : TextButton(onPressed: (){
+                                launchUrlString("https://www.weiss-world.com/de-de/products/rundschalttische-44/rundschalttisch-45");
+                          }, child: Text("Dokumentation",
+                              style: kSubHeadingStyle.copyWith(color: Colors.blue)))
                         ],
                       ),
                       Spacer(
