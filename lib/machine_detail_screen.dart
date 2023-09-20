@@ -275,7 +275,7 @@ class TCMachineCard extends StatelessWidget {
                         !onDetailScreen
                             ? SizedBox()
                             : Text("", style: kTextStyle),
-                        Text("Nächste Reperatur vorraussichtlich: 01.10.2031",
+                        Text("Nächste Reparatur vorraussichtlich: 01.10.2031",
                             style: kSubHeadingStyle),
                         !onDetailScreen
                             ? SizedBox()

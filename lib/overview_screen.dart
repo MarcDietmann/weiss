@@ -23,7 +23,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     "Sortiert nach Unternehmen",
     "Sortiert nach Standort",
     "Sortiert nach Maschinenart",
-    "Sortiert nach Reperaturdatum"
+    "Sortiert nach Reparaturdatum"
   ];
 
   _OverviewScreenState();
@@ -35,7 +35,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
         "Alle",
         "Sortiert nach Standort",
         "Sortiert nach Maschinenart",
-        "Sortiert nach Reperaturdatum"
+        "Sortiert nach Reparaturdatum"
       ];
     }
     return Scaffold(
@@ -100,13 +100,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             false)
                     ? RoundedContainer(
                         child: Padding(
-                          padding: const EdgeInsets.all(48.0),
-                          child: Center(
-                              child: Text(
+                        padding: const EdgeInsets.all(48.0),
+                        child: Center(
+                            child: Text(
                           "Keine Machinendaten verfügbar",
                           style: kSubHeadingStyle,
-                      )),
-                        ))
+                        )),
+                      ))
                     : Column(
                         children:
                             Provider.of<MachineData>(context, listen: true)
@@ -118,8 +118,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         padding: const EdgeInsets.only(top: 16.0),
                         child: RoundedContainer(
                           height: 300,
-                          width: 600,
-                          child: AddMachineButton(),
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(child: AddMachineButton(),width: 600,),
+                            ],
+                          ),
                         ),
                       ),
               ],
@@ -289,30 +294,30 @@ class _MyWidgetState extends State<MyWidget> {
               decoration: InputDecoration(labelText: 'IP-Adresse'),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("Kunde: "),
-              ),
-              DropdownButton<String>(
-                value: _customer,
-                items: ['Dr. Oetker', 'Wagner', 'Kunde 3', 'Kunde 4']
-                    .map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _customer = newValue!;
-                  });
-                },
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Padding(
+          //       padding: const EdgeInsets.all(8.0),
+          //       child: Text("Kunde: "),
+          //     ),
+          //     DropdownButton<String>(
+          //       value: _customer,
+          //       items: ['Dr. Oetker', 'Wagner', 'Kunde 3', 'Kunde 4']
+          //           .map((String value) {
+          //         return DropdownMenuItem<String>(
+          //           value: value,
+          //           child: Text(value),
+          //         );
+          //       }).toList(),
+          //       onChanged: (String? newValue) {
+          //         setState(() {
+          //           _customer = newValue!;
+          //         });
+          //       },
+          //     ),
+          //   ],
+          // ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -324,9 +329,8 @@ class _MyWidgetState extends State<MyWidget> {
                 value: _machineType,
                 items: [
                   'TC Rundschalttisch',
-                  'Maschine 2',
-                  'Maschine 3',
-                  'Maschine 4'
+                  'TR Ringrundschalttisch',
+                  'NC Rundschalttisch',
                 ].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

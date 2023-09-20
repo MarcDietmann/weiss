@@ -11,15 +11,23 @@ class LLMWrapper extends ChangeNotifier {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization':
-        'Bearer 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'
+        'Bearer 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'
   };
-  List<String> token = ["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","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","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"];
+  List<String> token = [
+    "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",
+    "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",
+    "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"
+  ];
   int currentToken = 0;
   List<Map<String, dynamic>> messages = [
     {
       "role": "system",
       "content":
-          "Du bist ein Hilfechatbot um unseren Kunden bei Problemen an Produktionsmachinen zu helfen. Gib knappe Handlungsempfehlungen. Wenn Daten in einen kritischen Bereich kommen kann es zu schäden an der Maschine kommen und eine schneller Reperatur ist von nöten. Bounds cmin bedeuted kritisches min, cmax kritisches max:${DiagnosticsProvider.bounds.toString()}; "
+          "Du bist ein Hilfechatbot um unseren Kunden bei Problemen an Produktionsmachinen zu helfen. Gib knappe Handlungsempfehlungen. "
+              "Wenn Daten in einen kritischen Bereich kommen kann es zu schäden an der Maschine kommen und eine schneller Reperatur ist von nöten."
+              " Bounds cmin bedeuted kritisches min, cmax kritisches max:${DiagnosticsProvider.bounds.toString()}. "
+              "Wenn die Drehzeit zu schnell ist, ist die Maschine wahrscheinlich falsch eingestellt. Wenn die Stromstärke zu hoch ist kann das auf eine blockierte Maschine hindeuten."
+              " Wenn die Vibration zu hoch ist, kann das auf einen Defekt hindeuten. Wenn die Vibration zu hoch ist, kann das an einem kapputen Kugellager liegen "
     },
   ];
 
@@ -54,11 +62,12 @@ class LLMWrapper extends ChangeNotifier {
     // }
   ];
 
-  String _getCurrentToken(){
+  String _getCurrentToken() {
     return token[currentToken];
   }
-  void changeToken(){
-    currentToken = (currentToken+1)%token.length;
+
+  void changeToken() {
+    currentToken = (currentToken + 1) % token.length;
     headers["Authorization"] = "Bearer ${_getCurrentToken()}";
   }
 
@@ -170,7 +179,7 @@ class LLMWrapper extends ChangeNotifier {
   Future<String> callFunction(String name, Map? arguments) async {
     await Future.delayed(Duration(seconds: 1));
     if (name == "get_current_status") {
-      return "Temperatur: 42 Grad. Vibration in letzer Minute 64. Stromspannung des Motors 13.4 Volt";
+      return "Temperatur: 42.1 Grad. Durchschnittliche Vibration in der letzer Minute 53.92. Stromstärke des Motors ist zu hoch mit 0.66 Ampere. Die Dauer der Drehung ist zu hoch mit nur 0.25ms";
     }
     if (name == "get_bounds") {
       return DiagnosticsProvider.bounds.toString();
@@ -253,6 +262,4 @@ class LLMWrapper extends ChangeNotifier {
   final Random _rnd = Random();
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-
-
 }
