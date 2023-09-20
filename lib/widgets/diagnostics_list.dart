@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:weiss_app/2022/constants.dart';
+import 'package:weiss_app/utils/diagnostics_provider.dart';
 
 class DiagnosticsList extends StatelessWidget {
-  final List? errorList;
+  final List<MachineStatus>? errorList;
 
   const DiagnosticsList({Key? key, required this.errorList,})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    errorList?.sort((a, b) => b["level"].compareTo(a["level"]));
+    errorList?.sort((MachineStatus a, MachineStatus b) => b.level.index.compareTo(a.level.index));
     return Container(
         child: errorList == null
             ? Center(
@@ -29,23 +30,23 @@ class DiagnosticsList extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: ListTile(
-                title: Text(errorList![index]["name"],
+                title: Text(errorList![index].title,
                     style: TextStyle(decorationColor: Colors.yellow)),
-                subtitle: Text(errorList![index]["message"],
+                subtitle: Text(errorList![index].help,
                     style: TextStyle(decorationColor: Colors.yellow)),
                 leading: Container(
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
-                      color: errorCodeColors[errorList![index]["level"]]),
+                      color: errorCodeColors[errorList![index].level.index]),
                   child: Center(
                     child: Icon([
                       Icons.check_circle,
                       Icons.warning,
                       Icons.error,
                       Icons.pause_circle,
-                    ][errorList![index]["level"]],color: Colors.black,),
+                    ][errorList![index].level.index],color: Colors.black,),
                   ),
                 ),
                 visualDensity: VisualDensity.compact,
