@@ -48,7 +48,7 @@ dependencies:
 #  flutter_plot: ^0.1.0
 #  flutter_launcher_icons: ^0.8.1
   #flutter_isolate: ^1.0.0+15
-
+  url_launcher: ^6.0.12
   mqtt_client: 9.0.0 # BSD-3-Clause
   connectivity_plus: 2.1.0
   #starflut: ^1.0.0

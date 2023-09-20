@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
 import 'package:weiss_app/widgets/diagnostics_list.dart';
 import 'package:weiss_app/widgets/helper_chat.dart';
@@ -86,32 +87,9 @@ class MachineDetailScreen extends StatelessWidget {
                           ) =>
                               (data["temperature"] as double),
                         ),
-                        Chart(
-                            title: "Spannung - max",
-                            topic: DiagnosticsProvider.maxVoltageLastCycleTopic,
-                            ytitle: "Volt",
-                            mapping: (
-                              Map data,
-                            ) =>
-                                (data["MaxLastCycle"] as double)),
-                        Chart(
-                            title: "Zeit pro Umdrehung",
-                            topic: DiagnosticsProvider.turnTimeTopic,
-                            ytitle: "Millisekunden",
-                            mapping: (
-                              Map data,
-                            ) =>
-                                (data["CycleTimeSensorLowToSensorHigh"] as int)
-                                    .toDouble()),
-                        Chart(
-                            title: "Vibration",
-                            topic: DiagnosticsProvider.vibrationTopic,
-                            ytitle: "G",
-                            mapping: (
-                              Map data,
-                            ) =>
-                                (data["adxlX"]["Key Values"]
-                                    ["peak_high_frequency"] as double)),
+                        Chart(title: "Spannung - max", topic: DiagnosticsProvider.maxVoltageLastCycleTopic, ytitle: "Volt", mapping: (Map data,) => (data["MaxLastCycle"] as double)),
+                        Chart(title: "Zeit pro Umdrehung", topic: DiagnosticsProvider.turnTimeTopic, ytitle: "Millisekunden", mapping: (Map data,) => ((data["CycleTimeSensorLowToSensorHigh"]??0) as int).toDouble()),
+                        Chart(title: "Vibration", topic: DiagnosticsProvider.vibrationTopic, ytitle: "G", mapping: (Map data,) => (data["adxlX"]["Key Values"]["peak_high_frequency"] as double)),
                       ],
                     ),
                   ),
@@ -152,84 +130,85 @@ class TCMachineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double height = onDetailScreen ? double.infinity : 200;
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Container(
-          height: height,
-          child: GestureDetector(
-            onTap: () {
-              if (onDetailScreen) return;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MachineDetailScreen()));
-            },
-            child: Hero(
-              tag: "machine",
-              child: Material(
-                child: RoundedContainer(
-                  height: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("TC Rundschalttisch", style: kHeadingStyle),
-                            Text("ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
-                                style: kTextStyle),
-                            !onDetailScreen
-                                ? SizedBox()
-                                : Text("", style: kTextStyle),
-                            Text("Seriennummer: TC320T", style: kTextStyle),
-                            Text("621242 - Walldürn", style: kTextStyle),
-                            !onDetailScreen
-                                ? SizedBox()
-                                : Text("", style: kTextStyle),
-                            Text(
-                                "Nächste Reperatur vorraussichtlich: 01.10.2031",
-                                style: kSubHeadingStyle),
-                            !onDetailScreen
-                                ? SizedBox()
-                                : Text(
-                                    "Gesamte Umdrehungen: ${Provider.of<DiagnosticsProvider>(context).getLatestValue(DiagnosticsProvider.totalCycleTopic)["CycleCount"]}",
-                                    style: kTextStyle),
-                            !onDetailScreen
-                                ? SizedBox()
-                                : Text("Montage: 01.10.2011",
-                                    style: kTextStyle),
-                            !onDetailScreen
-                                ? SizedBox()
-                                : Text("Letzte Reperatur: 22.06.2022",
-                                    style: kTextStyle),
-                          ],
-                        ),
-                        Spacer(
-                          flex: 2,
-                        ),
-                        Image.asset(
-                          "assets/images/tc320t.png",
-                          height: min(200, height * 0.7),
-                        ),
-                        Spacer(
-                          flex: 1,
-                        ),
-                        onDetailScreen
-                            ? SizedBox()
-                            : StatusDisplay(
-                                small: !onDetailScreen,
-                                status:
-                                    Provider.of<DiagnosticsProvider>(context)
-                                        .getTotalMachineStatus(),
-                              ),
-                      ],
-                    ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        height: height,
+        child: GestureDetector(
+          onTap: () {
+            if (onDetailScreen) return;
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => MachineDetailScreen()));
+          },
+          child: Hero(
+            tag: "machine",
+            child: Material(
+              child: RoundedContainer(
+                height: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("TC Rundschalttisch", style: kHeadingStyle),
+                          Text("ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
+                              style: kTextStyle),
+                          !onDetailScreen
+                              ? SizedBox()
+                              : Text("", style: kTextStyle),
+                          Text("Seriennummer: TC320T", style: kTextStyle),
+                          Text("621242 - Walldürn", style: kTextStyle),
+                          !onDetailScreen
+                              ? SizedBox()
+                              : Text("", style: kTextStyle),
+                          Text("Nächste Reperatur vorraussichtlich: 01.10.2031",
+                              style: kSubHeadingStyle),
+                          !onDetailScreen
+                              ? SizedBox()
+                              : Text(
+                                  "Gesamte Umdrehungen: ${Provider.of<DiagnosticsProvider>(context).getLatestValue(DiagnosticsProvider.totalCycleTopic)["CycleCount"]}",
+                                  style: kTextStyle),
+                          !onDetailScreen
+                              ? SizedBox()
+                              : Text("Montage: 01.10.2011", style: kTextStyle),
+                          !onDetailScreen
+                              ? SizedBox()
+                              : Text("Letzte Reperatur: 22.06.2022",
+                                  style: kTextStyle),
+                          Spacer(),
+                          !onDetailScreen
+                              ? SizedBox()
+                              : TextButton(onPressed: (){
+                                launchUrlString("https://www.weiss-world.com/de-de/products/rundschalttische-44/rundschalttisch-45");
+                          }, child: Text("Dokumentation",
+                              style: kSubHeadingStyle.copyWith(color: Colors.blue)))
+                        ],
+                      ),
+                      Spacer(
+                        flex: 2,
+                      ),
+                      Image.asset(
+                        "assets/images/tc320t.png",
+                        height: min(200, height * 0.7),
+                      ),
+                      Spacer(flex: 1,),
+
+                      onDetailScreen
+                          ? SizedBox()
+                          : StatusDisplay(
+                              small: !onDetailScreen,
+                        status: Provider.of<DiagnosticsProvider>(context).getTotalMachineStatus(),
+                            ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
