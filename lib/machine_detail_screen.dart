@@ -38,7 +38,8 @@ class MachineDetailScreen extends StatelessWidget {
                           ),
                         ),
                         StatusDisplay(
-                          status: MachineStatus.good,
+                          status: Provider.of<DiagnosticsProvider>(context)
+                              .getTotalMachineStatus(),
                         ),
                       ],
                     ),
@@ -59,28 +60,8 @@ class MachineDetailScreen extends StatelessWidget {
                           style: kSubHeadingStyle,
                         ),
                         DiagnosticsList(
-                          errorList: [
-                            {
-                              "name": "Temperatur",
-                              "message": "Perfekt - 42°C",
-                              "level": 0
-                            },
-                            {
-                              "name": "Vibration",
-                              "message": "Warnung - 23% stärker als normal",
-                              "level": 1
-                            },
-                            {
-                              "name": "Voltage",
-                              "message": "Das ist ein Fehler",
-                              "level": 2
-                            },
-                            {
-                              "name": "Umdrehungsanzahl",
-                              "message": "Perfekt",
-                              "level": 0
-                            }
-                          ],
+                          errorList: Provider.of<DiagnosticsProvider>(context)
+                              .getMachineStatuses(),
                         ),
                       ],
                     ),
@@ -104,6 +85,7 @@ class MachineDetailScreen extends StatelessWidget {
                         ),
                         Chart(title: "Spannung - max", topic: DiagnosticsProvider.maxVoltageLastCycleTopic, ytitle: "Volt", mapping: (Map data,) => (data["MaxLastCycle"] as double)),
                       Chart(title: "Zeit pro Umdrehung", topic: DiagnosticsProvider.turnTimeTopic, ytitle: "Millisekunden", mapping: (Map data,) => (data["CycleTimeSensorLowToSensorHigh"] as int).toDouble()),
+                      Chart(title: "Vibration", topic: DiagnosticsProvider.vibrationTopic, ytitle: "G", mapping: (Map data,) => (data["adxlX"]["Key Values"]["peak_high_frequency"] as double)),
                       ],
                     ),
                   ),
@@ -201,6 +183,7 @@ class TCMachineCard extends StatelessWidget {
                         ? SizedBox()
                         : StatusDisplay(
                             small: !onDetailScreen,
+                      status: Provider.of<DiagnosticsProvider>(context).getTotalMachineStatus(),
                           ),
                   ],
                 ),
@@ -263,16 +246,16 @@ class Chart extends StatelessWidget {
 }
 
 class StatusDisplay extends StatelessWidget {
-  final MachineStatus? status;
+  final MachineStatusLevel? status;
   final bool small;
   const StatusDisplay({super.key, this.status, this.small = false});
 
   @override
   Widget build(BuildContext context) {
     Color color = Colors.green;
-    if (status == MachineStatus.bad) {
+    if (status == MachineStatusLevel.bad) {
       color = Colors.red;
-    } else if (status == MachineStatus.warning) {
+    } else if (status == MachineStatusLevel.warning) {
       color = Colors.yellow;
     }
     double height = small ? 100 : 250;
@@ -305,9 +288,9 @@ class StatusDisplay extends StatelessWidget {
                   ),
                 ),
                 Icon(
-                    status == MachineStatus.bad
+                    status == MachineStatusLevel.bad
                         ? Icons.heart_broken_sharp
-                        : status == MachineStatus.warning
+                        : status == MachineStatusLevel.warning
                             ? Icons.warning
                             : Icons.gpp_good,
                     color: color,
@@ -315,7 +298,7 @@ class StatusDisplay extends StatelessWidget {
               ],
             ),
             Text(
-              "${status == MachineStatus.bad ? "Schlecht" : status == MachineStatus.warning ? "Warnung" : "Gut"}",
+              "${status == MachineStatusLevel.bad ? "Schlecht" : status == MachineStatusLevel.warning ? "Warnung" : "Gut"}",
               style: small ? kSubHeadingStyle : kHeadingStyle,
             )
           ],
@@ -325,8 +308,10 @@ class StatusDisplay extends StatelessWidget {
   }
 }
 
-enum MachineStatus {
+enum MachineStatusLevel {
   good,
   warning,
   bad,
 }
+
+
