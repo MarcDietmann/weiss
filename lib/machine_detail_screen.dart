@@ -152,7 +152,7 @@ class MachineDetailScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => ChatScreen(
-                        title: 'Chat with AI',
+                        title: 'Chat with Weiss AI Wizzard',
                       )));
         },
         label: Text("Hilfe Chat",style: kSubHeadingStyle,),

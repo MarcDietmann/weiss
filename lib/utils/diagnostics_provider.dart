@@ -6,11 +6,13 @@ import 'package:weiss_app/utils/mqtt_provider.dart';
 
 class DiagnosticsProvider extends ChangeNotifier {
   MQTTProvider? mqttProvider;
-  static String voltageTopic = "voltage";
+  static String maxVoltageLastCycleTopic = "EF3_010.001.070.005/Process/EffectiveCurrent_A/MaxLastCycle";
   static String vibrationTopic = "Wallduern/Hackathon/TC150T/DeviceProperties/Vibration_processed";
   static String temperatureTopic =
       "Wallduern/Hackathon/TC150T/DeviceProperties/Temperature_processed";
-  String totalCycleTopic = "cycle";
+  static String totalCycleTopic = "EF3_010.001.070.005/KPI/CycleCount";
+  static String turnTimeTopic = "EF3_010.001.070.005/Process/CycleTime/SensorLowToSensorHigh_ms";
+
 
   List<String> topics = [];
 
@@ -23,7 +25,7 @@ class DiagnosticsProvider extends ChangeNotifier {
   // };
 
   void init() {
-    topics = [temperatureTopic,vibrationTopic];
+    topics = [temperatureTopic,vibrationTopic,totalCycleTopic,maxVoltageLastCycleTopic,turnTimeTopic];
     for (String topic in topics) {
       mqttProvider!.subscribeToTopic(topic, (msg) => safeData(topic, msg));
     }
@@ -36,7 +38,7 @@ class DiagnosticsProvider extends ChangeNotifier {
       data["julian_timestamp"] = DateTime.now().millisecondsSinceEpoch;
       _data[topic]?.add(data);
       notifyListeners();
-    print("Data: $_data");
+    // print("Data: $_data");
   }
 
   List<Map> getData(String topic) {
