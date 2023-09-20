@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:weiss_app/utils/diagnostics_provider.dart';
+import 'package:weiss_app/utils/mqtt_provider.dart';
 import 'package:weiss_app/widgets/diagnostics_list.dart';
 import 'package:weiss_app/widgets/helper_chat.dart';
 import 'package:weiss_app/widgets/rounded_container.dart';
@@ -85,11 +86,61 @@ class MachineDetailScreen extends StatelessWidget {
                           mapping: (
                             Map data,
                           ) =>
-                              (data["temperature"] as double),
+                              ((data["temperature"] ?? 40.0) as double),
                         ),
-                        Chart(title: "Spannung - max", topic: DiagnosticsProvider.maxVoltageLastCycleTopic, ytitle: "Volt", mapping: (Map data,) => (data["MaxLastCycle"] as double)),
-                        Chart(title: "Zeit pro Umdrehung", topic: DiagnosticsProvider.turnTimeTopic, ytitle: "Millisekunden", mapping: (Map data,) => ((data["CycleTimeSensorLowToSensorHigh"]??0) as int).toDouble()),
-                        Chart(title: "Vibration", topic: DiagnosticsProvider.vibrationTopic, ytitle: "G", mapping: (Map data,) => (data["adxlX"]["Key Values"]["peak_high_frequency"] as double)),
+                        Chart(
+                            title: "Spannung - max",
+                            topic: DiagnosticsProvider.maxVoltageLastCycleTopic,
+                            ytitle: "Volt",
+                            mapping: (
+                              Map data,
+                            ) =>
+                                (data["MaxLastCycle"] as double)),
+                        Chart(
+                            title: "Zeit pro Umdrehung",
+                            topic: DiagnosticsProvider.turnTimeTopic,
+                            ytitle: "Millisekunden",
+                            mapping: (
+                              Map data,
+                            ) =>
+                                ((data["CycleTimeSensorLowToSensorHigh"] ?? 0)
+                                        as int)
+                                    .toDouble()),
+                        Chart(
+                            title: "Vibration",
+                            topic: DiagnosticsProvider.vibrationTopic,
+                            ytitle: "G",
+                            mapping: (
+                              Map data,
+                            ) =>
+                                (data["adxlX"]["Key Values"]
+                                    ["peak_high_frequency"] as double)),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        RoundedContainer(
+                          width: double.infinity,
+
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(48.0),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  size: 48,
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Text(
+                                  "Weitere Diagramme einbinden",
+                                  style: kSubHeadingStyle,
+                                )
+                              ],
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -128,7 +179,7 @@ class TCMachineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = onDetailScreen ? double.infinity : 200;
+    double height = onDetailScreen ? double.infinity : 220;
     return Container(
       height: height,
       child: GestureDetector(
@@ -177,26 +228,53 @@ class TCMachineCard extends StatelessWidget {
                         Spacer(),
                         !onDetailScreen
                             ? SizedBox()
-                            : TextButton(onPressed: (){
-                              launchUrlString("https://www.weiss-world.com/de-de/products/rundschalttische-44/rundschalttisch-45");
-                        }, child: Text("Dokumentation",
-                            style: kSubHeadingStyle.copyWith(color: Colors.blue)))
+                            : TextButton(
+                                onPressed: () {
+                                  launchUrlString(
+                                      "https://www.weiss-world.com/de-de/products/rundschalttische-44/rundschalttisch-45");
+                                },
+                                child: Text("Dokumentation",
+                                    style: kSubHeadingStyle.copyWith(
+                                        color: Colors.blue))),
                       ],
                     ),
                     Spacer(
                       flex: 2,
                     ),
-                    Image.asset(
-                      "assets/images/tc320t.png",
-                      height: min(200, height * 0.7),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        !onDetailScreen
+                            ? SizedBox():Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: RoundedContainer(color: kYellow, child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                Icon(Icons.phone,color: Colors.black,),
+                                SizedBox(width: 8,),
+                                Text("Kunden kontaktieren",style: kSubHeadingStyle,),
+                              ],
+                            ),
+                          ),),
+                        ),
+                        Spacer(),
+                        Image.asset(
+                          "assets/images/tc320t.png",
+                          height: min(200, height * 0.7),
+                        ),
+                        Spacer(),
+                      ],
                     ),
-                    Spacer(flex: 1,),
-
+                    Spacer(
+                      flex: 1,
+                    ),
                     onDetailScreen
                         ? SizedBox()
                         : StatusDisplay(
                             small: !onDetailScreen,
-                      status: Provider.of<DiagnosticsProvider>(context).getTotalMachineStatus(),
+                            status: Provider.of<DiagnosticsProvider>(context)
+                                .getTotalMachineStatus(),
                           ),
                   ],
                 ),
@@ -233,7 +311,13 @@ class Chart extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: kSubHeadingStyle),
+              Row(
+                children: [
+                  Text(title, style: kSubHeadingStyle),
+                  Spacer(),
+                  Icon(Icons.close, color: Colors.grey),
+                ],
+              ),
               SfCartesianChart(
                 primaryXAxis: DateTimeAxis(title: AxisTitle(text: "Zeit")),
                 primaryYAxis: NumericAxis(title: AxisTitle(text: ytitle)),
@@ -243,7 +327,8 @@ class Chart extends StatelessWidget {
                         .getData(topic),
                     xValueMapper: (Map data, _) =>
                         DateTime.fromMillisecondsSinceEpoch(
-                            data["julian_timestamp"]),
+                            data["julian_timestamp"] ??
+                                DateTime(2023, 1, 1).millisecondsSinceEpoch),
                     yValueMapper: (Map data, _) => mapping(data),
                     name: title,
                     markerSettings: MarkerSettings(isVisible: true),

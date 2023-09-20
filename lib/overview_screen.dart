@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/2022/constants.dart';
 import 'package:weiss_app/machine_provider.dart';
+import 'package:weiss_app/utils/mqtt_provider.dart';
 import 'package:weiss_app/widgets/rounded_container.dart';
 
 class OverviewScreen extends StatefulWidget {
@@ -17,7 +18,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
     "Alle",
     "Sortiert nach Unternehmen",
     "Sortiert nach Standort",
-    "Sortiert nach Maschinenart"
+    "Sortiert nach Maschinenart",
+    "Sortiert nach Reperaturdatum"
   ];
 
   @override
@@ -34,12 +36,9 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Image.asset(
-                          "assets/images/logo.png",
-                          height: 100,
-                        ),
+                      Image.asset(
+                        "assets/images/logo_high_res.png",
+                        height: 150,
                       ),
                       SizedBox(
                         width: 8,
@@ -85,6 +84,34 @@ class _OverviewScreenState extends State<OverviewScreen> {
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0).copyWith(top: 100),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Spacer(),
+                GestureDetector(
+                    onTap: () {
+                      Provider.of<MQTTProvider>(context,listen: false).isConnected?
+                      Provider.of<MQTTProvider>(context, listen: false).disconnect():
+                      Provider.of<MQTTProvider>(context, listen: false).startConnection();
+                    },
+                    child: RoundedContainer(
+                      color: Colors.blue,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+                        child: Text(
+                          Provider.of<MQTTProvider>(context).isConnected
+                              ? "Trennen"
+                              : "Verbinden",
+                          style: kTextStyle.copyWith(color: Colors.white),
+                        ),
+                      ),
+                    )),Spacer(),
+              ],
+            ),
+          )
         ],
       ),
     );

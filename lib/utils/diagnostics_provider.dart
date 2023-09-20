@@ -47,7 +47,13 @@ class DiagnosticsProvider extends ChangeNotifier {
     },
   };
 
-  Map<String, List<Map>> _data = {};
+  Map<String, List<Map>> _data = {
+    temperatureTopic: [],
+    vibrationTopic: [],
+    totalCycleTopic: [],
+    maxVoltageLastCycleTopic: [],
+    turnTimeTopic: []
+  };
 
   // {
   //   "Wallduern/Hackathon/TC150T/DeviceProperties/Temperature_processed": [
@@ -84,6 +90,7 @@ class DiagnosticsProvider extends ChangeNotifier {
 
   Map getLatestValue(String topic) {
     if (_data[topic] == null) return {};
+    if(_data[topic]!.isEmpty) return {};
     return _data[topic]!.last;
   }
 
