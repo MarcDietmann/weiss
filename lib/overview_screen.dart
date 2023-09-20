@@ -1,15 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:weiss_app/2022/constants.dart';
-import 'package:weiss_app/machine_detail_screen.dart';
 import 'package:weiss_app/machine_provider.dart';
 import 'package:weiss_app/widgets/rounded_container.dart';
 
-class OverviewScreen extends StatelessWidget {
-  const OverviewScreen({Key? key}) : super(key: key);
+class OverviewScreen extends StatefulWidget {
+  OverviewScreen({Key? key}) : super(key: key);
 
+  @override
+  State<OverviewScreen> createState() => _OverviewScreenState();
+}
+
+class _OverviewScreenState extends State<OverviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +110,8 @@ class MyWidget extends StatefulWidget {
 
 class _MyWidgetState extends State<MyWidget> {
   final TextEditingController _ipAddressController = TextEditingController();
-  String _machineType = 'Typ 1';
+  String _machineType = 'TC Rundschalttisch';
+  String _customer ="Dr. Oetker";
 
   void _addMachine() {
     final String ipAddress = _ipAddressController.text;
@@ -136,21 +139,53 @@ class _MyWidgetState extends State<MyWidget> {
             decoration: InputDecoration(labelText: 'IP-Adresse'),
           ),
         ),
-        DropdownButton<String>(
-          value: _machineType,
-          items: ['Typ 1', 'Typ 2', 'Typ 3', 'Typ 4'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              _machineType = newValue!;
-              // Aktualisieren Sie den Bildpfad basierend auf dem ausgewählten Maschinentyp
-              // _imagePath = ...;
-            });
-          },
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Kunde: "),
+            ),
+            DropdownButton<String>(
+              value: _customer,
+              items: ['Dr. Oetker', 'Wagner', 'Kunde 3', 'Kunde 4'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _customer = newValue!;
+                });
+              },
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Maschine: "),
+            ),
+            DropdownButton<String>(
+              value: _machineType,
+              items: ['TC Rundschalttisch', 'Maschine 2', 'Maschine 3', 'Maschine 4'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _machineType = newValue!;
+                });
+              },
+            ),
+          ],
         ),
         ElevatedButton(
           onPressed: _addMachine,

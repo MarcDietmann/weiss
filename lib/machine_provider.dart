@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:weiss_app/machine_detail_screen.dart';
 
@@ -5,7 +6,7 @@ class MachineData extends ChangeNotifier{
   List<Widget> machines = [TCMachineCard(onDetailScreen: false,)];
   bool isAdding = false;
 
-  void startAdding(){
+  void startAdding() {
     isAdding = true;
     notifyListeners();
   }
@@ -15,6 +16,5 @@ class MachineData extends ChangeNotifier{
     isAdding= false;
     notifyListeners();
     print(machines);
-
   }
 }
