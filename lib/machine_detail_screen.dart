@@ -172,45 +172,49 @@ class TCMachineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = onDetailScreen?double.infinity:200;
-    return Container(
-      height: height,
-      child: GestureDetector(
-        onTap: () {
-          if(onDetailScreen)return;
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => MachineDetailScreen()));
-        },
-        child: Hero(
-          tag: "machine",
-          child: Material(
-            child: RoundedContainer(
-              height: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        height: height,
+        child: GestureDetector(
+          onTap: () {
+            if(onDetailScreen)return;
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => MachineDetailScreen()));
+          },
+          child: Hero(
+            tag: "machine",
+            child: Material(
+              child: RoundedContainer(
+                height: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
 
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("TC Rundschalttisch", style: kHeadingStyle),
-                        Text("ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
-                            style: kTextStyle),
-                        Text("", style: kTextStyle),
-                        Text("621242 - Walldürn", style: kTextStyle),
-                        Text("Nächste Reperatur: 20.12.2024",
-                            style: kSubHeadingStyle),
-                      ],
-                    ),
-                    // Spacer(
-                    //   flex: 2,
-                    // ),
-                    Image.asset(
-                      "assets/images/tc320t.png",
-                      height: min(200,height*0.7),
-                    ),
-                    onDetailScreen?SizedBox():StatusDisplay(small: !onDetailScreen,),
-                  ],
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("TC Rundschalttisch", style: kHeadingStyle),
+                          Text("ROBUST. ZUVERLÄSSIG. VIELSEITIG.",
+                              style: kTextStyle),
+                          Text("", style: kTextStyle),
+                          Text("621242 - Walldürn", style: kTextStyle),
+                          Text("Nächste Reperatur: 20.12.2024",
+                              style: kSubHeadingStyle),
+                        ],
+                      ),
+                      Spacer(
+                        flex: 2,
+                      ),
+                      Image.asset(
+                        "assets/images/tc320t.png",
+                        height: min(200,height*0.7),
+                      ),
+                      Spacer(flex: 1,),
+                      onDetailScreen?SizedBox():StatusDisplay(small: !onDetailScreen,),
+                    ],
+                  ),
                 ),
               ),
             ),
