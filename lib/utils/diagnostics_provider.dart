@@ -46,10 +46,10 @@ class DiagnosticsProvider extends ChangeNotifier {
       "high_warning": "Die Vibration ist zu hoch."
     },
     turnTimeTopic: {
-      "min": 400,
-      "max": 500,
-      "cmin": 300,
-      "cmax": 600,
+      "min": 500,
+      "max": 600,
+      "cmin": 400,
+      "cmax": 700,
       "low_waring": "Die Drehzeit ist zu niedrig.",
       "high_warning": "Die Drehzeit ist zu hoch."
     },
@@ -120,7 +120,7 @@ class DiagnosticsProvider extends ChangeNotifier {
         (data) => data["MaxLastCycle"]));
     statuses.add(getStatusForTopic(vibrationTopic, "Vibration", "",
         (data) => data["adxlX"]["Key Values"]["peak_high_frequency"]));
-    statuses.add(getStatusForTopic(turnTimeTopic, "Dauer der Drehung", "ms", (data)=>data["CycleTimeSensorLowToSensorHigh"]/1000));
+    statuses.add(getStatusForTopic(turnTimeTopic, "Dauer der Drehung", "ms", (data)=>(data["CycleTimeSensorLowToSensorHigh"] as int).toDouble()));
     machineStatuses = statuses;
     return statuses;
   }

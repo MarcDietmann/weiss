@@ -98,11 +98,11 @@ class MachineDetailScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ChatScreen(
-                              title: 'Chat with Weiss AI Wizzard',
+                              title: 'Chat with Weiss AI Wizard',
                             )));
               },
               label: Text(
-                "Weiss AI Wizzard",
+                "Weiss AI Wizard",
                 style: kSubHeadingStyle,
               ),
               icon: Icon(Icons.chat),
@@ -209,7 +209,7 @@ class ChatHistory extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("Wizzard Chatverlauf", style: kSubHeadingStyle),
+            Text("Wizard Chatverlauf", style: kSubHeadingStyle),
                 Column(
                   children: [
                     for (int index = 0; index < messages.length + (context.read<LLMWrapper>().loading ? 1 : 0); index++)
@@ -319,7 +319,7 @@ class TCMachineCard extends StatelessWidget {
                                         context: context,
                                         builder: (context) => AlertDialog(
                                               title: Text(
-                                                  "Daten mit den Support teilen"),
+                                                  "Daten mit dem Support teilen"),
                                               content: Text(
                                                   "Um den Support zu kontaktieren, müssen Sie Ihre Daten mit dem Support teilen. Sind Sie damit einverstanden?"),
                                               actions: [
