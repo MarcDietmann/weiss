@@ -11,7 +11,7 @@ class LLMWrapper extends ChangeNotifier {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization':
-        'Bearer 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'
+        'Bearer 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'
   };
   List<String> token = [
     "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",
